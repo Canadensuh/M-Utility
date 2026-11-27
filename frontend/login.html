@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M-Utility — Entrar</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Nunito:wght@600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&display=swap" />
+  <link rel="stylesheet" href="css/simbolos.css" />
+  <link rel="stylesheet" href="css/nc.css" />
+  <link rel="stylesheet" href="css/helpy.css" />
+  <link rel="stylesheet" href="css/teclas.css" />
+  <link rel="stylesheet" href="css/vitrine.css" />
+  <script>if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("anima");</script>
+</head>
+<body>
+  <header class="topo">
+    <a href="index.html" class="marca" aria-label="M-Utility — início"><img src="assets/logo.png" alt="M-Utility" /></a>
+    <div class="topo-acoes">
+      <a href="index.html" class="key key--sm">← Voltar ao site</a>
+    </div>
+  </header>
+
+  <main class="login">
+    <div class="login-grade">
+
+      <section class="login-lado" aria-label="Boas-vindas">
+        <h1>Pega o crachá e <em>bora trabalhar</em>.</h1>
+        <p class="sub">Entre com a sua conta do M-Utility.</p>
+        <div class="escala" data-escala="340 226"><div class="escala-dentro" data-salinha="acenando"></div></div>
+      </section>
+
+      <!-- O formulário é um crachá pendurado no cordão (a cor muda com o cargo) -->
+      <div class="login-cracha p-usuario" id="loginCracha">
+        <span class="login-cordao" aria-hidden="true"></span>
+        <div class="papel login-cartao">
+          <div class="login-faixa">
+            <h2>Entrar</h2>
+            <span id="faixaCargo">Usuário</span>
+          </div>
+
+          <form class="form" id="formLogin" novalidate>
+            <div class="perfis-escolha" role="radiogroup" aria-label="Entrar como">
+              <div>
+                <input type="radio" name="perfil" id="perfilUsuario" value="usuario" checked />
+                <label for="perfilUsuario" class="key"><i class="ic ic-usuario" aria-hidden="true"></i> Usuário</label>
+              </div>
+              <div>
+                <input type="radio" name="perfil" id="perfilAdmin" value="admin" />
+                <label for="perfilAdmin" class="key"><i class="ic ic-coroa" aria-hidden="true"></i> Administrador</label>
+              </div>
+            </div>
+
+            <label class="campo">
+              <span>Usuário ou e-mail</span>
+              <input class="entrada" id="email" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Seu nome de usuário ou e-mail" required />
+            </label>
+            <div class="campo">
+              <label class="campo-rotulo" for="senha">Senha</label>
+              <div class="entrada-com-botao">
+                <input class="entrada" id="senha" type="password" autocomplete="current-password" placeholder="Sua senha" required />
+                <button type="button" class="ver-senha key key--sm" data-alvo="senha" aria-label="Mostrar senha">Mostrar</button>
+              </div>
+            </div>
+
+            <label class="checkbox"><input type="checkbox" id="lembrar" /> Manter conectado</label>
+
+            <p class="aviso" id="aviso" role="alert" hidden></p>
+
+            <button type="submit" class="key key--lg key--block key--accent" id="botaoEntrar">Entrar</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/catalogo.js"></script>
+  <script src="js/sessao.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/helpy.js"></script>
+  <script src="js/escritorio.js"></script>
+  <script src="js/vitrine.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

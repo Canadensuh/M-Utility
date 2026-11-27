@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M-Utility — Utilidades para a operação logística</title>
+  <meta name="description" content="M-Utility: as ferramentas do dia a dia da operação logística numa mesa só. Controle NC, Localizador de AWB, e-mails, histórico e estatísticas, com o Helpy BOT ajudando em cada passo." />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Nunito:wght@600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&display=swap" />
+  <link rel="stylesheet" href="css/simbolos.css" />
+  <link rel="stylesheet" href="css/nc.css" />
+  <link rel="stylesheet" href="css/helpy.css" />
+  <link rel="stylesheet" href="css/teclas.css" />
+  <link rel="stylesheet" href="css/cracha.css" />
+  <link rel="stylesheet" href="css/vitrine.css" />
+  <!-- Liga as animações antes do primeiro desenho (evita "piscar"); quem pede menos movimento fica sem elas -->
+  <script>if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("anima");</script>
+</head>
+<body>
+
+  <header class="topo">
+    <a href="#inicio" class="marca" aria-label="M-Utility — início"><img src="assets/logo.png" alt="M-Utility" /></a>
+    <nav class="topo-nav" aria-label="Navegação principal">
+      <a href="#utilidades" class="key key--sm key--escura" data-nav="utilidades">Utilidades</a>
+      <a href="#controle-nc" class="key key--sm key--escura" data-nav="controle-nc">Controle NC</a>
+      <a href="#localizador" class="key key--sm key--escura" data-nav="localizador">Localizador</a>
+      <a href="#helpy" class="key key--sm key--escura" data-nav="helpy">Helpy BOT</a>
+      <a href="#perfis" class="key key--sm key--escura" data-nav="perfis">Perfis</a>
+      <a href="#sobre" class="key key--sm key--escura" data-nav="sobre">Sobre</a>
+    </nav>
+    <div class="topo-acoes">
+      <a href="login.html" class="key key--sm key--mostarda"><i class="ic ic-cadeado-aberto" aria-hidden="true"></i> Entrar</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- O "deck": as telas ficam lado a lado e a rodinha do mouse leva para a
+         DIREITA, como slides (js/landing.js). No celular, uma embaixo da outra. -->
+    <div class="lp-deck" data-deck>
+      <div class="lp-deck-vista">
+        <div class="lp-deck-trilho">
+
+          <!-- ===== 1. Início ===== -->
+          <section id="inicio" class="lp-tela" data-tela="inicio" aria-label="Início">
+            <div class="lp-conteudo hero">
+              <div>
+                <h1>As utilidades da sua operação, <em>numa mesa só</em>.</h1>
+                <p class="sub">Controle de não conformidades, localização de AWBs, cobranças por e-mail e os números da operação, com o Helpy BOT de olho nos prazos.</p>
+                <div class="acoes">
+                  <a href="login.html" class="key key--lg key--accent"><i class="ic ic-cadeado-aberto" aria-hidden="true"></i> Entrar no M-Utility</a>
+                  <a href="#utilidades" class="key key--lg">Ver as utilidades</a>
+                </div>
+              </div>
+
+              <!-- Réplica da Minha Mesa do Controle NC -->
+              <div class="inclina">
+                <div class="escala inclina-alvo" data-escala="1280 760" data-alto=".78">
+                  <div class="escala-dentro">
+                    <div class="app" aria-hidden="true">
+                      <nav class="app-trilho">
+                        <img src="assets/logo.png" alt="" />
+                        <span class="ativo"><i class="ic ic-pacote"></i></span>
+                        <span><i class="ic ic-arquivo"></i></span>
+                        <span><i class="ic ic-envelope"></i></span>
+                        <hr />
+                        <span><i class="ic ic-localizador"></i></span>
+                        <span class="sair"><i class="ic ic-entrada"></i></span>
+                      </nav>
+                      <header class="app-topo">
+                        <b>M-<i>Utility</i></b>
+                        <div class="app-usuario"><span class="av">JD</span><div><strong>Joe Doe</strong><small>Usuário · Setor NC</small></div></div>
+                      </header>
+                      <div class="app-corpo">
+                        <section class="app-mesa">
+                          <div class="app-mesa-titulo"><i class="ic ic-pacote"></i> Minha Mesa</div>
+                          <div class="app-tampo">
+                            <div class="app-ferramentas">
+                              <span class="mini-key quadrado"><i class="ic ic-pasta"></i></span>
+                              <span class="busca"><i class="ic ic-olho"></i> Buscar por #ID, NF, AWB, cliente, tipo…</span>
+                              <span class="espaco"></span>
+                              <span class="mini-key verde"><i class="ic ic-ticket"></i> Tickets</span>
+                              <span class="mini-key"><i class="ic ic-documento"></i> Tabela</span>
+                              <span class="mini-key"><i class="ic ic-mais"></i> Inserir volume</span>
+                              <span class="mini-key quadrado"><i class="ic ic-envelope"></i></span>
+                              <span class="mini-key quadrado vermelha"><i class="ic ic-x"></i></span>
+                            </div>
+                            <div class="app-tickets" data-mesa-tickets></div>
+                          </div>
+                        </section>
+                        <aside class="app-lado">
+                          <div class="app-score">
+                            <div><b>5</b><small>Sem integração</small></div>
+                            <div><b>1</b><small>Aguardando entrega</small></div>
+                            <div><b class="amarelo">3</b><small>Resolvidos hoje</small></div>
+                          </div>
+                          <div class="balao-app"><b class="nome">Helpy BOT:</b> Ei, não esquece o e-mail! 📧 3 volumes estão esperando em <b>Enviar e-mail</b>.<br /><span class="chamada">✓ Já enviei</span></div>
+                          <div class="escala" data-escala="340 226"><div class="escala-dentro" data-salinha="acenando"></div></div>
+                        </aside>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== 2. Utilidades, cada uma num ticket ===== -->
+          <section id="utilidades" class="lp-tela" data-tela="utilidades" aria-labelledby="tituloUtil">
+            <div class="lp-conteudo">
+              <div class="cabeca centro">
+                <h2 id="tituloUtil" class="titulo">Uma utilidade para cada <em>parte da operação</em></h2>
+                <p class="sub">O setor de NC foi o primeiro a ganhar a sua mesa. As próximas ferramentas entram no mesmo lugar, com o mesmo login.</p>
+              </div>
+              <div class="tickets">
+                <article class="tk" style="--cor:#5E7A2E;--rot:-1deg" data-faixa="0 .25">
+                  <header class="tk-cab"><b>#01</b><span class="tag">Setor NC</span></header>
+                  <div class="tk-corpo"><span class="tk-ico"><i class="ic ic-pacote" aria-hidden="true"></i></span><h3>Controle NC</h3>
+                    <p>Cada volume com problema: DANFE bipada, prazo vigiado, ticket impresso e saída com AWB.</p></div>
+                  <div class="tk-picote"></div><footer class="tk-pe"><span>Todos os perfis</span><span class="tk-barras"></span></footer>
+                </article>
+                <article class="tk" style="--cor:#2E6FB3;--rot:.8deg" data-faixa=".15 .4">
+                  <header class="tk-cab"><b>#02</b><span class="tag">Separação</span></header>
+                  <div class="tk-corpo"><span class="tk-ico"><i class="ic ic-localizador" aria-hidden="true"></i></span><h3>Localizador de AWB</h3>
+                    <p>Importa a lista da planilha e bipa as peças. Cada resultado aparece na hora, com cor e som.</p></div>
+                  <div class="tk-picote"></div><footer class="tk-pe"><span>Todos os perfis</span><span class="tk-barras"></span></footer>
+                </article>
+                <article class="tk" style="--cor:#C98B3A;--rot:-.6deg" data-faixa=".3 .55">
+                  <header class="tk-cab"><b>#03</b><span class="tag">Comunicação</span></header>
+                  <div class="tk-corpo"><span class="tk-ico"><i class="ic ic-envelope" aria-hidden="true"></i></span><h3>Enviar E-mail</h3>
+                    <p>Os tickets que precisam de cobrança, agrupados por cliente e prontos para o e-mail.</p></div>
+                  <div class="tk-picote"></div><footer class="tk-pe"><span>Todos os perfis</span><span class="tk-barras"></span></footer>
+                </article>
+                <article class="tk" style="--cor:#9C7FD6;--rot:.6deg" data-faixa=".45 .7">
+                  <header class="tk-cab"><b>#04</b><span class="tag">Registro</span></header>
+                  <div class="tk-corpo"><span class="tk-ico"><i class="ic ic-arquivo" aria-hidden="true"></i></span><h3>Histórico de Tickets</h3>
+                    <p>Entradas e saídas de todos os volumes, com busca e exportação para planilha.</p></div>
+                  <div class="tk-picote"></div><footer class="tk-pe"><span>Todos os perfis</span><span class="tk-barras"></span></footer>
+                </article>
+                <article class="tk" style="--cor:#C4452C;--rot:-.9deg" data-faixa=".6 .85">
+                  <header class="tk-cab"><b>#05</b><span class="tag">Gestão</span></header>
+                  <div class="tk-corpo"><span class="tk-ico"><i class="ic ic-grafico" aria-hidden="true"></i></span><h3>Estatísticas</h3>
+                    <p>Os números da operação por mês, tipo e cliente, mais crachás, clientes e auditoria.</p></div>
+                  <div class="tk-picote"></div><footer class="tk-pe"><span>Administrador</span><span class="tk-barras"></span></footer>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== 3. Controle NC: o volume #008 em 4 atos ===== -->
+          <section id="controle-nc" class="lp-tela" data-tela="controle-nc" aria-labelledby="tituloNc">
+            <div class="lp-conteudo nc-grade" data-palco>
+              <div>
+                <h2 id="tituloNc" class="titulo">O caminho do volume <em>#008</em></h2>
+                <ol class="atos">
+                  <li class="ato"><span class="ato-num">01</span><h3>Inserir</h3><p>Bipa a DANFE, escolhe o tipo e o status. O ticket sai impresso.</p></li>
+                  <li class="ato"><span class="ato-num">02</span><h3>Cobrar</h3><p>O Helpy lembra do e-mail até o status virar E-mail enviado.</p></li>
+                  <li class="ato"><span class="ato-num">03</span><h3>Vigiar o prazo</h3><p>Os dias contam desde a entrada. Perto do limite, o ticket avisa.</p></li>
+                  <li class="ato"><span class="ato-num">04</span><h3>Dar saída</h3><p>Com a AWB, o volume sai como Tratado e vai para o histórico.</p></li>
+                </ol>
+              </div>
+
+              <div class="palco" aria-hidden="true">
+                <div class="pl-impressora"><small>Zebra · Helpy</small><span class="pl-luz"></span><span class="pl-fenda"></span></div>
+                <div class="pl-recorte">
+                  <article class="papel pl-ticket">
+                    <header class="pl-ticket-faixa"><span>M-Utility · NC</span><span>Cliente Exemplo</span></header>
+                    <div class="pl-ticket-corpo">
+                      <span class="pl-num">#008</span>
+                      <div class="pl-linha">
+                        <span class="pl-chip"><i class="ic ic-pacote"></i> Sem integração</span>
+                        <span class="pl-chip"><i class="ic ic-codigo-barras"></i> NF 123456</span>
+                        <span class="pl-chip"><i class="ic ic-pastas"></i> Prateleira</span>
+                      </div>
+                      <div class="pl-status">
+                        <span class="pl-st-1">Enviar e-mail</span>
+                        <span class="pl-st-2">E-mail enviado</span>
+                        <span class="pl-st-3">Tratado · AWB TXAQ…789TX</span>
+                      </div>
+                      <div class="pl-prazo">
+                        <span>Prazo sem integração</span>
+                        <div class="pl-prazo-barra"><span></span></div>
+                        <div class="pl-prazo-dias"><span>dia 1</span><span>dia 10</span></div>
+                      </div>
+                      <p class="pl-nota">“Caixa pequena, arquivo ainda não integrado.”</p>
+                    </div>
+                    <div class="pl-barras"></div>
+                  </article>
+                  <span class="pl-carimbo">Tratado<small>saída registrada</small></span>
+                </div>
+              </div>
+
+              <div class="nc-lado" aria-hidden="true">
+                <div class="nc-helpy" data-carinho>
+                  <div class="balao-app"><b class="nome">Helpy BOT:</b> Ei, não esquece o e-mail do #008! 📧</div>
+                  <div data-helpy="piscando"></div>
+                </div>
+                <div class="nc-aviso"><i class="ic ic-festa"></i><span><strong>Volume #008 tratado!</strong>Saiu do NC com a AWB.</span></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== 4. Localizador de AWB (a tela de Scan) ===== -->
+          <section id="localizador" class="lp-tela" data-tela="localizador" aria-labelledby="tituloAwb">
+            <div class="lp-conteudo awb-grade">
+              <div>
+                <h2 id="tituloAwb" class="titulo">Bipou, <em>achou</em>.</h2>
+                <p class="sub">Importa a lista de AWBs da planilha e sai bipando. Cada peça cai na caixa certa: integral, parcial, não encontrada ou inválida.</p>
+              </div>
+              <div class="inclina">
+                <div class="escala inclina-alvo" data-escala="1180 700" data-alto=".8">
+                  <div class="escala-dentro">
+                    <div class="loc" aria-hidden="true" data-loc>
+                      <div class="loc-topo">
+                        <span class="loc-selo"><i class="ic ic-localizador"></i> LOCALIZADOR DE AWB</span>
+                        <div class="loc-passos">
+                          <span><i class="ok">✓</i> Cliente</span><em></em><span><i class="ok">✓</i> Separação</span><em></em>
+                          <span><i class="ok">✓</i> Importar</span><em></em><span><i class="num">4</i> <b>Scan</b></span>
+                        </div>
+                      </div>
+                      <div class="loc-moldura">
+                        <div class="loc-esteiras">
+                          <div class="loc-faixa" data-cesto="nao"><span class="loc-caixa"></span><div class="loc-cesto nao">NÃO ENCONTRADO <b>0</b></div></div>
+                          <div class="loc-faixa" data-cesto="integral"><span class="loc-caixa"></span><div class="loc-cesto integral">INTEGRAL <b>0/3</b></div></div>
+                          <div class="loc-faixa" data-cesto="parcial"><span class="loc-caixa"></span><div class="loc-cesto parcial">PARCIAL <b>0/2</b></div></div>
+                          <div class="loc-faixa" data-cesto="invalido"><span class="loc-caixa"></span><div class="loc-cesto invalido">INVÁLIDO <b>0</b></div></div>
+                        </div>
+                        <div class="loc-direita">
+                          <div class="loc-leitor"><small>Bipe a AWB · Cliente · Parcial e integral</small><code data-loc-codigo>Bipe ou digite aqui</code></div>
+                          <div class="loc-resultado r-vazio" data-loc-resultado><span class="rico">…</span><strong>Pronto</strong><code>aguardando leitura</code><span>Bipe a primeira peça</span></div>
+                          <div class="loc-lista">
+                            <div class="loc-lista-cab"><i class="ic ic-documento"></i> AWBS IMPORTADAS <b>5</b></div>
+                            <table class="loc-tabela"><thead><tr><th>#</th><th>AWB</th><th>Tipo</th><th></th></tr></thead><tbody data-loc-linhas></tbody></table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== 5. Helpy BOT ===== -->
+          <section id="helpy" class="lp-tela" data-tela="helpy" aria-labelledby="tituloHelpy">
+            <div class="lp-conteudo helpy-grade">
+              <div>
+                <h2 id="tituloHelpy" class="titulo">O Helpy BOT é o <em>colega de mesa</em></h2>
+                <ul class="recursos">
+                  <li><span class="r-ico"><i class="ic ic-sino" aria-hidden="true"></i></span><strong>Lembra do que ficou para trás</strong><span>E-mails pendentes, prazos chegando, entregas para conferir.</span></li>
+                  <li><span class="r-ico"><i class="ic ic-lampada" aria-hidden="true"></i></span><strong>Guia cada passo</strong><span>Do tipo de NC até a impressão do ticket.</span></li>
+                  <li><span class="r-ico"><i class="ic ic-cadeado" aria-hidden="true"></i></span><strong>Guarda a senha do ICS</strong><span>Protegida por PIN, pronta para copiar.</span></li>
+                </ul>
+              </div>
+              <div class="helpy-mesinha"><div class="escala" data-escala="340 226" data-alto=".5" data-max="2.4"><div class="escala-dentro" data-salinha="feliz"></div></div></div>
+              <div class="roupas">
+                <div class="balao-app"><b class="nome">Helpy BOT:</b> Bora trocar de roupa? 👕
+                  <div class="roupas-grade" data-roupas></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== 6. Perfis: os crachás ===== -->
+          <section id="perfis" class="lp-tela" data-tela="perfis" aria-labelledby="tituloPerfis">
+            <div class="lp-conteudo">
+              <div class="cabeca centro">
+                <h2 id="tituloPerfis" class="titulo">Cada pessoa com o seu <em>crachá</em></h2>
+                <p class="sub">O administrador emite os crachás. No login, o M-Utility confere o cargo e libera as telas certas.</p>
+              </div>
+              <div class="perfis">
+                <article class="perfil invertido" data-faixa="0 .5">
+                  <div class="perfil-texto"><h3>Administrador</h3><p>Tudo do usuário, mais estatísticas, crachás, clientes e o registro de auditoria.</p></div>
+                  <ul style="list-style:none;margin:0;padding:0"><li class="cracha-item">
+                    <span class="cordao" aria-hidden="true"></span>
+                    <div class="cracha p-admin" aria-hidden="true">
+                      <span class="cracha-faixa"></span>
+                      <span class="cracha-foto">JD</span>
+                      <span class="cracha-nome">Jane Doe</span>
+                      <span class="cracha-cargo">Administrador</span>
+                      <span class="cracha-email">jane.doe@mutility.com.br</span>
+                      <span class="cracha-id">ID 0042</span>
+                      <span class="codigo-barras"></span>
+                    </div>
+                  </li></ul>
+                </article>
+                <article class="perfil" data-faixa=".4 .9">
+                  <ul style="list-style:none;margin:0;padding:0"><li class="cracha-item">
+                    <span class="cordao" aria-hidden="true"></span>
+                    <div class="cracha p-usuario" aria-hidden="true">
+                      <span class="cracha-faixa"></span>
+                      <span class="cracha-foto">JD</span>
+                      <span class="cracha-nome">Joe Doe</span>
+                      <span class="cracha-cargo">Usuário</span>
+                      <span class="cracha-email">joe.doe@mutility.com.br</span>
+                      <span class="cracha-id">ID 0107</span>
+                      <span class="codigo-barras"></span>
+                    </div>
+                  </li></ul>
+                  <div class="perfil-texto"><h3>Usuário</h3><p>Quem opera o dia a dia: insere volumes, troca status, registra AWB e usa os utilitários.</p></div>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== 7. Quem faz ===== -->
+          <section id="sobre" class="lp-tela" data-tela="sobre" aria-labelledby="tituloSobre">
+            <div class="lp-conteudo sobre">
+              <div>
+                <h2 id="tituloSobre" class="titulo">Feito por quem está <em>na operação</em></h2>
+                <article class="papel mps">
+                  <span class="mps-foto"><img src="https://github.com/Canadensuh.png?size=200" alt="Foto de Murilo N.B" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()" /></span>
+                  <div>
+                    <h3>Murilo N.B</h3>
+                    <span class="cargo">MPS · MapleProjectSeries</span>
+                    <p>Ideia, design e desenvolvimento do M-Utility.</p>
+                    <a href="https://github.com/Canadensuh" target="_blank" rel="noopener">github.com/Canadensuh</a>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Chamada final: depois da última tela, a página desce ===== -->
+    <section id="comecar" class="lp-final" aria-labelledby="tituloFinal">
+      <div class="container">
+        <article class="papel final-ticket">
+          <header class="final-faixa"><span>M-Utility</span><span>#001 · Boas-vindas</span></header>
+          <h2 id="tituloFinal">Pronto para organizar a operação?</h2>
+          <p>Entre com o seu crachá e abra a utilidade do seu setor.</p>
+          <div class="acoes">
+            <a href="login.html" class="key key--lg key--accent"><i class="ic ic-cadeado-aberto" aria-hidden="true"></i> Entrar no M-Utility</a>
+          </div>
+          <div class="final-barras" aria-hidden="true"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="container">
+      <div class="rodape-grade">
+        <div>
+          <a href="#inicio" class="marca" aria-label="M-Utility — início"><img src="assets/logo.png" alt="M-Utility" /></a>
+          <p>Utilidades para a operação logística, numa mesa só.</p>
+        </div>
+        <nav aria-label="Utilidades">
+          <strong>Utilidades</strong>
+          <a href="#controle-nc">Controle NC</a>
+          <a href="#localizador">Localizador de AWB</a>
+          <a href="#utilidades">Todas as utilidades</a>
+        </nav>
+        <nav aria-label="Acesso">
+          <strong>Acesso</strong>
+          <a href="login.html">Entrar como usuário</a>
+          <a href="login.html?perfil=admin">Entrar como administrador</a>
+        </nav>
+        <div class="rodape-mps">
+          <strong>Desenvolvido por</strong>
+          <span>MPS · MapleProjectSeries</span>
+          <a href="https://github.com/Canadensuh" target="_blank" rel="noopener">github.com/Canadensuh</a>
+        </div>
+      </div>
+      <div class="rodape-base">
+        <span>© 2026 M-Utility · MPS · MapleProjectSeries.</span>
+        <span>Os dados ficam no navegador de quem usa.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/helpy.js"></script>
+  <script src="js/escritorio.js"></script>
+  <script src="js/vitrine.js"></script>
+  <script src="js/landing.js"></script>
+</body>
+</html>

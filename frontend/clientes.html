@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M-Utility — Clientes</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Nunito:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/simbolos.css" />
+  <link rel="stylesheet" href="css/icones.css" />
+  <link rel="stylesheet" href="css/helpy.css" />
+  <link rel="stylesheet" href="css/painel.css" />
+  <link rel="stylesheet" href="css/mesa.css" />
+  <link rel="stylesheet" href="css/paginas.css" />
+  <link rel="stylesheet" href="css/teclas.css" />
+  <link rel="stylesheet" href="css/papelaria.css" />
+  <link rel="stylesheet" href="css/cracha.css" />
+  <link rel="stylesheet" href="css/conta.css" />
+  <link rel="stylesheet" href="css/celular.css" />
+  <link rel="stylesheet" href="css/nc.css" />
+</head>
+<body class="tela-mesa tela-pagina tela-clientes">
+
+  <header class="mesa-topo">
+    <a href="controle-nc.html" class="brand" data-inicio><img src="assets/logo.png" alt="" /><span class="brand-nome">M-<b>Utility</b></span></a>
+    <div class="topbar-acoes">
+      <div class="usuario-menu">
+        <span class="usuario-avatar" data-usuario-iniciais aria-hidden="true"></span>
+        <span class="usuario-info"><strong data-usuario-nome></strong><span data-usuario-perfil></span></span>
+        <button type="button" class="btn-sair" data-acao="sair">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mesa pagina-cheia">
+    <header class="area-topo centro-topo">
+      <h2 id="tituloPagina"><i class="ic ic-predio" aria-hidden="true"></i> Clientes</h2>
+    </header>
+    <section class="tampo pagina-tampo" aria-labelledby="tituloPagina">
+      <div class="filtros-barra">
+        <label class="busca-campo"><i class="ic ic-olho" aria-hidden="true"></i>
+          <input id="busca" class="input" type="search" placeholder="Buscar cliente por nome ou CNPJ…" autocomplete="off" /></label>
+        <div class="acao-lado acao-dir">
+          <div class="nc-visao" role="radiogroup" aria-label="Forma de exibir">
+            <button type="button" class="btn btn-sm ativo" data-visao="cards" role="radio" aria-checked="true" title="Ver em cards"><i class="ic ic-predio" aria-hidden="true"></i><span class="rot"> Cards</span></button>
+            <button type="button" class="btn btn-sm" data-visao="tabela" role="radio" aria-checked="false" title="Ver em tabela"><i class="ic ic-documento" aria-hidden="true"></i><span class="rot"> Tabela</span></button>
+          </div>
+          <button type="button" class="btn btn-primary" id="novoCliente"><i class="ic ic-mais" aria-hidden="true"></i> Novo cliente</button>
+        </div>
+      </div>
+      <div class="grade-rolagem" id="lista"></div>
+    </section>
+  </main>
+
+  <p class="aviso-offline aviso-flutuante" id="avisoOffline" hidden></p>
+
+  <!-- Pop-up de cliente: o mesmo para criar (Novo cliente) e editar (lápis do cartão) -->
+  <dialog class="modal modal-cliente" id="modalCliente" aria-labelledby="tituloModalCliente">
+    <form class="modal-conteudo" id="formCliente" novalidate>
+      <header class="modal-topo">
+        <h2 id="tituloModalCliente">Novo cliente</h2>
+        <button type="submit" value="cancelar" formnovalidate class="btn btn-ghost btn-sm" aria-label="Fechar"><i class="ic ic-x" aria-hidden="true"></i></button>
+      </header>
+      <div class="cliente-modal-corpo">
+        <ul class="cliente-amostra" id="amostraCliente" aria-label="Como fica o ticket"></ul>
+        <div class="form-grade">
+          <label class="campo inteiro">Nome<input class="input" name="nome" maxlength="60" required autocomplete="off" /></label>
+          <label class="campo inteiro">CNPJ <span class="campo-ajuda">opcional · a DANFE com esse CNPJ já vem com o cliente</span>
+            <input class="input tk-mono" name="cnpj" inputmode="numeric" maxlength="18" placeholder="00.000.000/0000-00" autocomplete="off" /></label>
+          <div class="campo inteiro">Cor do ticket
+            <div class="cliente-cores"><span id="coresCliente" class="cliente-cores"></span>
+              <input type="color" name="cor" value="#6E9BC4" aria-label="Outra cor" title="Outra cor" /></div>
+          </div>
+        </div>
+      </div>
+      <p class="cartao-sub" id="infoCliente"></p>
+      <p class="aviso aviso-erro" id="erroCliente" hidden></p>
+      <div class="modal-acoes">
+        <button type="button" class="btn key--red" id="removerCliente" hidden><i class="ic ic-x" aria-hidden="true"></i> Remover</button>
+        <button type="submit" value="cancelar" formnovalidate class="btn">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="salvarCliente"><i class="ic ic-check" aria-hidden="true"></i> Cadastrar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/catalogo.js"></script>
+  <script src="js/sessao.js"></script>
+  <script src="js/conta.js"></script>
+  <script src="js/navegacao.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/helpy.js"></script>
+  <script src="js/ticket-ui.js"></script>
+  <script src="js/planilha.js"></script>
+  <script src="js/arquivos.js"></script>
+  <script src="js/clientes.js"></script>
+</body>
+</html>

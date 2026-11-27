@@ -1,0 +1,564 @@
+/* =========================================================
+   helpy.css — mascote Helpy, balões, toasts e confete
+   ========================================================= */
+
+/* ---------- Avatar ---------- */
+.helpy-avatar { width: 96px; height: 96px; flex: none; }
+.helpy-svg { width: 100%; height: 100%; overflow: visible; }
+.helpy-svg * { transform-box: fill-box; transform-origin: center; }
+.helpy-sombra { fill: rgba(0, 0, 0, .25); animation: helpy-sombra 3.2s ease-in-out infinite; }
+.helpy-corpo { animation: helpy-flutua 3.2s ease-in-out infinite; transform-box: view-box; transform-origin: 60px 60px; }
+.helpy-antena { stroke: #23291B; stroke-width: 3; stroke-linecap: round; }
+.helpy-luz { fill: #E8735C; animation: helpy-luz 1.8s ease-in-out infinite; }
+.helpy-orelha { fill: #23291B; }
+.helpy-visor { fill: #10140C; }
+.helpy-olho { fill: #A6F08A; animation: helpy-pisca 4.5s infinite; filter: drop-shadow(0 0 3px rgba(166, 240, 138, .9)); }
+.helpy-boca { fill: none; stroke: #A6F08A; stroke-width: 3; stroke-linecap: round; transition: d .3s; }
+.helpy-bochecha { fill: #E8735C; opacity: .55; }
+.helpy-tronco { fill: #6E8A3E; }
+.helpy-botao { fill: var(--primary); animation: helpy-luz 2.4s ease-in-out infinite; }
+.helpy-braco { fill: none; stroke: #23291B; stroke-width: 6; stroke-linecap: round; }
+.helpy-braco-dir { transform-origin: 0% 100%; }
+
+/* Humores */
+.helpy-avatar.pensando .helpy-olhos { transform: translate(4px, -3px); transition: transform .2s; }
+.helpy-avatar.pensando .helpy-luz { animation-duration: .5s; }
+.helpy-avatar.acenando .helpy-braco-dir { animation: helpy-aceno .5s ease-in-out 4; }
+.helpy-avatar.comemorando .helpy-corpo { animation: helpy-pulo .45s ease-in-out 4; }
+.helpy-avatar.comemorando .helpy-braco { animation: helpy-aceno .3s ease-in-out 6; }
+.helpy-avatar.alerta .helpy-luz { fill: var(--danger); animation-duration: .4s; }
+
+@keyframes helpy-flutua { 50% { transform: translateY(-5px); } }
+@keyframes helpy-sombra { 50% { transform: scaleX(.82); opacity: .6; } }
+@keyframes helpy-luz { 50% { fill: var(--primary); filter: drop-shadow(0 0 6px var(--primary)); } }
+@keyframes helpy-pisca { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+@keyframes helpy-aceno { 50% { transform: rotate(-28deg); } }
+@keyframes helpy-pulo { 50% { transform: translateY(-14px); } }
+
+/* ---------- Balões ---------- */
+.helpy-feed {
+  display: flex; flex-direction: column; gap: .65rem;
+  overflow-y: auto;
+}
+.helpy-msg {
+  position: relative;
+  padding: .8rem .95rem;
+  border-radius: 14px 14px 14px 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: .92rem;
+  line-height: 1.5;
+  animation: helpy-entra .3s cubic-bezier(.2, .9, .3, 1.3);
+}
+.helpy-msg p { margin: 0 0 .4rem; }
+.helpy-msg p:last-child { margin: 0; }
+.helpy-msg strong { color: var(--text); }
+.helpy-msg-dica { border-color: color-mix(in srgb, var(--primary) 55%, var(--border)); background: var(--primary-soft); }
+.helpy-msg-sucesso { border-color: var(--sucesso-borda); background: var(--sucesso-bg); }
+.helpy-msg-alerta { border-color: var(--alerta-borda); background: var(--alerta-bg); }
+.helpy-msg-memoria { border-color: color-mix(in srgb, var(--primary) 55%, var(--border)); border-left: 4px solid var(--primary); }
+.helpy-citacao {
+  margin: .5rem 0 0; padding: .55rem .7rem;
+  border-radius: 8px; background: var(--surface-2);
+  font-style: italic; font-size: .88rem;
+}
+.helpy-citacao small { display: block; font-style: normal; color: var(--muted); margin-top: .25rem; }
+
+.helpy-digitando { display: flex; gap: 5px; width: fit-content; padding: .75rem .9rem; }
+.helpy-digitando span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: helpy-digita 1s infinite; }
+.helpy-digitando span:nth-child(2) { animation-delay: .15s; }
+.helpy-digitando span:nth-child(3) { animation-delay: .3s; }
+@keyframes helpy-digita { 30% { transform: translateY(-5px); background: var(--primary); } }
+@keyframes helpy-entra { from { opacity: 0; transform: translateY(8px) scale(.96); } }
+
+.helpy-acoes { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .7rem; }
+.helpy-acao {
+  font: inherit; font-size: .82rem; font-weight: 600;
+  padding: .4rem .75rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface-2); color: var(--text);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, transform .1s;
+}
+.helpy-acao:hover:not(:disabled) { border-color: var(--primary); transform: translateY(-1px); }
+.helpy-acao-destaque { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+.helpy-acao:disabled { opacity: .45; cursor: default; }
+.helpy-acao.escolhida { opacity: 1; border-color: var(--primary); }
+
+/* ---------- Toasts ---------- */
+.toasts {
+  position: fixed; right: 18px; top: 18px; z-index: 990;
+  display: flex; flex-direction: column; gap: .5rem;
+  width: min(360px, calc(100vw - 36px));
+  pointer-events: none;
+}
+.toast {
+  display: flex; gap: .7rem; align-items: flex-start;
+  padding: .8rem 1rem;
+  border-radius: 12px;
+  background: var(--grafite); color: #f4f4f5;
+  border: 1px solid #2c2d31;
+  border-left: 4px solid var(--primary);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
+  font-size: .9rem;
+  pointer-events: auto;
+  animation: toast-entra .4s cubic-bezier(.2, .9, .3, 1.3);
+}
+.toast-sucesso { border-left-color: var(--success-solid); }
+.toast-alerta { border-left-color: var(--danger); }
+.toast-icone { font-size: 1.2rem; line-height: 1.2; }
+.toast.saindo { animation: toast-sai .3s ease-in forwards; }
+@keyframes toast-entra { from { opacity: 0; transform: translateX(40px); } }
+@keyframes toast-sai { to { opacity: 0; transform: translateX(40px); } }
+
+/* ---------- Confete ---------- */
+.confete {
+  position: fixed; z-index: 999;
+  pointer-events: none;
+  border-radius: 2px;
+  animation: confete cubic-bezier(.2, .6, .4, 1) forwards;
+}
+@keyframes confete {
+  to { transform: translate(var(--dx), calc(var(--dy) + 340px)) rotate(var(--giro)); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .helpy-svg *, .helpy-msg, .toast { animation: none !important; }
+}
+
+/* Nome em toda fala e tickets um embaixo do outro */
+.helpy-msg .helpy-nome { color: var(--primary-strong, var(--primary)); font-weight: 800; letter-spacing: .01em; }
+.helpy-lista { list-style: none; margin: .2rem 0 .45rem; padding: 0; display: grid; gap: .1rem; }
+.helpy-lista li { font-variant-numeric: tabular-nums; }
+.helpy-lista li span { color: var(--muted, inherit); }
+.helpy-lista-mais { font-style: italic; opacity: .8; }
+
+/* ---------- Mais expressões ----------
+   A boca muda de forma (d), os olhos encolhem, piscam ou crescem. */
+.helpy-avatar { position: relative; }
+.helpy-lingua { fill: #E8735C; opacity: 0; transition: opacity .2s; }
+.helpy-gota { fill: #7FC4E8; opacity: 0; }
+.helpy-zzz { opacity: 0; }
+.helpy-zzz text { font: 800 11px/1 system-ui, sans-serif; fill: var(--text, #23291B); opacity: 0; }
+.helpy-afk { position: absolute; top: 2px; left: -6px; padding: .05rem .4rem; border-radius: 6px; background: #23291B; color: #A6F08A; font: 800 .62rem/1.4 system-ui, sans-serif; letter-spacing: .08em; opacity: 0; transform: rotate(-8deg) scale(.6); transition: opacity .3s, transform .3s; pointer-events: none; }
+.helpy-olho { transition: transform .25s; }
+
+/* surpreso: olhos grandes e boca em "O" */
+.helpy-avatar.surpreso .helpy-olho { animation: none; transform: scale(1.3); }
+.helpy-avatar.surpreso .helpy-boca { d: path("M56 64a4 4.5 0 1 0 8 0a4 4.5 0 1 0 -8 0"); }
+.helpy-avatar.surpreso .helpy-corpo { animation: helpy-susto .5s ease-out 1, helpy-flutua 3.2s ease-in-out .5s infinite; }
+
+/* piscando: uma piscadela e um sorriso de canto */
+.helpy-avatar.piscando .helpy-olho:last-child { animation: none; transform: scaleY(.12); }
+.helpy-avatar.piscando .helpy-boca { d: path("M51 61q10 7 18 -2"); }
+.helpy-avatar.piscando .helpy-bochecha { opacity: .9; }
+
+/* desconfiado: olhos apertados olhando de lado, boca torta e gota de suor */
+.helpy-avatar.desconfiado .helpy-olho { animation: none; transform: scaleY(.45); }
+.helpy-avatar.desconfiado .helpy-olhos { transform: translate(-5px, 1px); transition: transform .3s; }
+.helpy-avatar.desconfiado .helpy-boca { d: path("M51 64q4.5 -3 9 0t9 0"); }
+.helpy-avatar.desconfiado .helpy-gota { opacity: 1; animation: helpy-gota 1.6s ease-in infinite; }
+
+/* faminto: boca aberta com a linguinha e bochechas coradas */
+.helpy-avatar.faminto .helpy-boca { d: path("M50 60q10 11 20 0z"); fill: #10140C; }
+.helpy-avatar.faminto .helpy-lingua { opacity: 1; animation: helpy-lambe 1s ease-in-out infinite; }
+.helpy-avatar.faminto .helpy-olho { animation: none; transform: scaleY(.55) translateY(-2px); }
+.helpy-avatar.faminto .helpy-bochecha { opacity: .95; }
+
+/* triste: boca para baixo e olhos caídos */
+.helpy-avatar.triste .helpy-boca, .helpy-avatar.alerta .helpy-boca { d: path("M51 65q9 -6 18 0"); }
+.helpy-avatar.triste .helpy-olho { transform: scaleY(.7) translateY(2px); }
+.helpy-avatar.triste .helpy-luz { fill: #7FC4E8; animation: none; }
+
+/* apaixonado/feliz demais: bochechas fortes e sorrisão */
+.helpy-avatar.apaixonado .helpy-boca, .helpy-avatar.comemorando .helpy-boca { d: path("M50 60q10 10 20 0"); }
+.helpy-avatar.apaixonado .helpy-bochecha { opacity: 1; }
+
+/* sonolento: pálpebras pesadas e bocejo */
+.helpy-avatar.sonolento .helpy-olho { animation: none; transform: scaleY(.3) translateY(3px); }
+.helpy-avatar.sonolento .helpy-boca { d: path("M55 64a5 4 0 1 0 10 0a5 4 0 1 0 -10 0"); animation: helpy-boceja 4s ease-in-out infinite; }
+.helpy-avatar.sonolento .helpy-corpo { animation-duration: 5s; }
+.helpy-avatar.sonolento .helpy-luz { animation-duration: 4s; }
+
+/* dormindo (AFK): olhos fechados, Zzz subindo e luz apagada */
+.helpy-avatar.dormindo .helpy-olho { animation: none; transform: scaleY(.08) translateY(4px); filter: none; }
+.helpy-avatar.dormindo .helpy-boca { d: path("M56 64q4 2.5 8 0"); }
+.helpy-avatar.dormindo .helpy-corpo { animation: helpy-respira 4.5s ease-in-out infinite; }
+.helpy-avatar.dormindo .helpy-luz { animation: none; fill: #5A5A4A; }
+.helpy-avatar.dormindo .helpy-botao { animation: none; opacity: .4; }
+.helpy-avatar.dormindo .helpy-zzz { opacity: 1; }
+.helpy-avatar.dormindo .helpy-zzz text { animation: helpy-zzz 3s ease-in infinite; }
+.helpy-avatar.dormindo .helpy-zzz text:nth-child(2) { animation-delay: 1s; }
+.helpy-avatar.dormindo .helpy-zzz text:nth-child(3) { animation-delay: 2s; }
+.helpy-avatar.afk .helpy-afk { opacity: 1; transform: rotate(-8deg) scale(1); }
+
+@keyframes helpy-susto { 30% { transform: translateY(-10px) scale(1.04); } }
+@keyframes helpy-gota { 0% { transform: translateY(-2px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(6px); opacity: 0; } }
+@keyframes helpy-lambe { 50% { transform: translateX(3px) scaleX(1.15); } }
+@keyframes helpy-boceja { 0%, 70%, 100% { transform: scale(1); } 80%, 90% { transform: scale(1.5, 1.8); } }
+@keyframes helpy-respira { 50% { transform: translateY(2px) scaleY(.98); } }
+@keyframes helpy-zzz { 0% { opacity: 0; transform: translate(0, 4px) scale(.6); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(8px, -14px) scale(1.2); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .helpy-avatar .helpy-zzz text { animation: none !important; opacity: 1; }
+}
+
+/* ---------- Carinho: segurar o botão e passar o mouse em cima do Helpy ---------- */
+.helpy-avatar { cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; }
+.helpy-avatar.carinho { cursor: grabbing; }
+.helpy-avatar.carinho .helpy-olho { animation: none; transform: scaleY(.28) translateY(-2px); }
+.helpy-avatar.carinho .helpy-boca { d: path("M50 60q10 10 20 0"); }
+.helpy-avatar.carinho .helpy-bochecha { opacity: 1; transform: scale(1.5); }
+.helpy-avatar.carinho .helpy-corpo { animation: helpy-chamego .5s ease-in-out infinite; }
+.helpy-avatar.carinho .helpy-luz { fill: #F08CB0; animation-duration: .6s; }
+.helpy-coracao {
+  position: absolute; z-index: 0; font-size: 1.15rem; line-height: 1; pointer-events: none;
+  transform: translate(-50%, -50%); animation: helpy-coracao 1.25s ease-out forwards;
+}
+@keyframes helpy-chamego { 25% { transform: rotate(-4deg) translateY(-2px); } 75% { transform: rotate(4deg) translateY(-2px); } }
+@keyframes helpy-coracao {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+  20% { opacity: 1; transform: translate(-50%, -80%) scale(1.1); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--desvio, 0px)), -260%) scale(.9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .helpy-avatar.carinho .helpy-corpo, .helpy-coracao { animation: none !important; }
+}
+/* o Helpy fica na frente dos corações */
+.escritorio .helpy-avatar, .helpy-mesa .helpy-avatar { z-index: 2; }
+@keyframes helpy-coracao {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(.5); }
+  25% { opacity: 1; transform: translate(-50%, -60%) scale(1); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--desvio, 0px)), -330%) scale(1.1); }
+}
+
+/* =========================================================
+   Desafio da Água
+   ========================================================= */
+/* Helpy com a garrafa na mão (no convite do desafio) */
+.helpy-garrafa-mao { opacity: 0; transform: translateY(6px) scale(.6); transition: opacity .25s, transform .3s cubic-bezier(.2, .9, .3, 1.5); }
+.hg-vidro { fill: rgba(220, 240, 255, .75); stroke: #23291B; stroke-width: 2; }
+.hg-agua { fill: #4FA8E0; }
+.hg-tampa { fill: #2F6FB3; stroke: #23291B; stroke-width: 1.5; }
+.helpy-avatar.com-garrafa .helpy-garrafa-mao { opacity: 1; transform: none; animation: hg-balanca 1.4s ease-in-out .3s infinite; }
+.helpy-avatar.com-garrafa .helpy-braco-dir { animation: helpy-aceno .7s ease-in-out 2; }
+@keyframes hg-balanca { 50% { transform: rotate(-8deg) translateY(-2px); } }
+
+/* A garrafa na mesinha (no lugar do café) */
+.garrafa-agua {
+  --nivel: 0;
+  position: absolute; right: 30px; bottom: 18px; z-index: 2;
+  width: 46px; height: 80px; padding: 0; border: 0; background: none; cursor: pointer;
+  transition: transform .15s;
+}
+.garrafa-agua:hover { transform: translateY(-3px) rotate(-4deg); }
+.garrafa-agua:focus-visible { outline: 3px solid var(--oliva-clara, #8FA858); outline-offset: 3px; border-radius: 8px; }
+.garrafa-svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 3px 0 rgba(0, 0, 0, .25)); }
+.garrafa-tampa { fill: #2F6FB3; stroke: #23291B; stroke-width: 2; }
+.garrafa-vidro { fill: rgba(225, 242, 255, .55); stroke: #23291B; stroke-width: 2.2; }
+.garrafa-agua-nivel { fill: #4FA8E0; transform-box: view-box; transform-origin: 0 66px; transform: translateY(calc(14px + (1 - var(--nivel)) * 52px)); transition: transform .6s cubic-bezier(.3, 1.3, .5, 1); }
+.garrafa-onda { fill: #7CC3F0; transform-box: view-box; transform: translateY(calc(11px + (1 - var(--nivel)) * 52px)); transition: transform .6s cubic-bezier(.3, 1.3, .5, 1); animation: garrafa-onda 2.2s linear infinite; }
+.garrafa-brilho { stroke: rgba(255, 255, 255, .8); stroke-width: 2.5; stroke-linecap: round; }
+.garrafa-agua.vazia .garrafa-onda { opacity: 0; }
+.garrafa-meta {
+  position: absolute; left: 50%; bottom: -12px; transform: translateX(-50%); white-space: nowrap;
+  padding: .05rem .4rem; border-radius: 99px; background: #23291B; color: #A6F08A; font: 800 .62rem/1.4 system-ui, sans-serif; border: 1.5px solid #4FA8E0;
+}
+.garrafa-agua.meta-batida .garrafa-meta { background: #E3C567; color: #23291B; border-color: #23291B; }
+.garrafa-agua.glub { animation: garrafa-glub .6s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes garrafa-onda { 50% { transform: translate(-6px, calc(11px + (1 - var(--nivel)) * 52px)); } }
+@keyframes garrafa-glub { 30% { transform: rotate(-14deg) scale(1.08); } 60% { transform: rotate(8deg); } }
+
+@media (prefers-reduced-motion: reduce) { .garrafa-onda, .garrafa-agua.glub, .helpy-avatar.com-garrafa .helpy-garrafa-mao { animation: none !important; } }
+
+/* =========================================================
+   Desafio da Água: a TELA do jogo, no lugar da mesa
+   ========================================================= */
+/* tecla 3D azul (cor da água), no mesmo padrão das outras teclas */
+.btn.key--agua:not(.btn-ghost), .key.key--agua {
+  --k-top: #7CC8F2; --k-top-2: #3C93D6; --k-side: #22609A; --k-edge: #143E66; --k-text: #F2FAFF;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
+}
+.tampo.com-agua { position: relative; }
+.agua-tela {
+  --ag-azul: #3C93D6; --ag-azul-esc: #143E66; --ag-claro: #DDF0FB; --ag-papel: #F4FAFD; --ag-tinta: #12324F;
+  position: absolute; inset: 0; z-index: 40; display: flex; flex-direction: column; gap: .9rem; padding: 1.1rem 1.2rem;
+  border-radius: inherit; overflow: auto; color: var(--ag-tinta);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, .5) 0 2px, transparent 3px) 0 0 / 46px 46px,
+    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, .35) 0 1.5px, transparent 2.5px) 0 0 / 34px 34px,
+    linear-gradient(180deg, #BFE3F7, #8FCBEE 55%, #6CB4E6);
+  animation: ag-entra .25s ease-out;
+}
+.agua-tela-solta { position: fixed; inset: 70px 20px 20px; border-radius: 18px; box-shadow: 0 20px 60px rgba(0, 0, 0, .4); }
+@keyframes ag-entra { from { opacity: 0; transform: translateY(10px); } }
+.ag-barra-topo { display: flex; align-items: center; justify-content: space-between; gap: .8rem; }
+.ag-pontos { display: inline-flex; align-items: center; gap: .4rem; padding: .45rem .9rem; border-radius: 99px; background: var(--ag-azul-esc); color: #F2FAFF; font-weight: 700; box-shadow: 3px 3px 0 rgba(0, 0, 0, .25); }
+.ag-pontos b { font: 800 1.15rem var(--font-mono, monospace); color: #9FE0FF; }
+.ag-pontos .ic, .ag-bloco-cab .ic, .ag-numeros .ic, .ag-selo .ic { width: 1rem; height: 1rem; }
+.ag-grade { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(190px, .7fr) minmax(0, 1.3fr) minmax(0, 1.2fr); gap: 1rem; align-items: stretch; }
+.ag-bloco {
+  min-width: 0; display: flex; flex-direction: column; gap: .8rem; padding: 1rem 1.1rem 1.1rem;
+  background: var(--ag-papel); border-radius: 16px; outline: 3px solid var(--ag-azul-esc); box-shadow: 5px 6px 0 rgba(20, 62, 102, .35);
+}
+.ag-bloco-cab { display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap; }
+.ag-bloco-cab h3 { margin: 0; display: inline-flex; align-items: center; gap: .4rem; font: 800 .8rem var(--font-mono, monospace); letter-spacing: .14em; text-transform: uppercase; color: var(--ag-azul-esc); }
+.ag-selo { display: inline-flex; align-items: center; gap: .3rem; padding: .15rem .6rem; border-radius: 99px; background: var(--ag-claro); color: var(--ag-azul-esc); font-size: .78rem; font-weight: 800; }
+
+/* garrafa grande */
+.ag-garrafa { align-items: center; justify-content: center; text-align: center; }
+.ag-garrafa-palco { --nivel: 1; width: min(150px, 70%); aspect-ratio: 40 / 70; }
+.ag-garrafa-palco .garrafa-svg { filter: drop-shadow(4px 5px 0 rgba(20, 62, 102, .3)); }
+.ag-garrafa-pct { font: 800 2rem var(--font-mono, monospace); color: var(--ag-azul-esc); line-height: 1; }
+.ag-encher { width: 100%; justify-content: center; white-space: nowrap; font-size: .95rem; }
+.ag-encher:disabled { opacity: .5; cursor: not-allowed; }
+.ag-encher.pede { animation: ag-pede 1.4s ease-in-out infinite; }
+@keyframes ag-pede { 50% { transform: translateY(-3px); } }
+
+/* os 8 goles (gotas): cheia = ainda tem; vazia = já bebeu (clica de novo e ela volta) */
+.ag-slots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .7rem; }
+.ag-slot {
+  position: relative; aspect-ratio: 1; display: grid; place-items: center; padding: .4rem; cursor: pointer; font: inherit;
+  border-radius: 16px; border: 3px solid var(--ag-azul-esc); background: linear-gradient(180deg, #E9F6FD, #CBE8F8);
+  box-shadow: 0 5px 0 var(--ag-azul-esc), 0 8px 12px rgba(20, 62, 102, .25); transition: transform .12s, box-shadow .12s;
+}
+.ag-slot:hover { transform: translateY(-2px); }
+.ag-slot:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ag-azul-esc); }
+.ag-slot:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.ag-slot small { position: absolute; left: .45rem; top: .3rem; font: 800 .7rem var(--font-mono, monospace); color: var(--ag-azul-esc); opacity: .7; }
+.ag-gota-svg { width: 62%; height: 62%; overflow: visible; }
+.ag-gota-forma { fill: #3C93D6; stroke: var(--ag-azul-esc); stroke-width: 1.6; transform-box: fill-box; transform-origin: 50% 100%; }
+.ag-gota-brilho { fill: none; stroke: rgba(255, 255, 255, .85); stroke-width: 1.8; stroke-linecap: round; }
+.ag-slot.vazio { background: repeating-linear-gradient(-45deg, #EEF3F6 0 8px, #E3EAEF 8px 16px); border-style: dashed; box-shadow: 0 2px 0 var(--ag-azul-esc); }
+.ag-slot.vazio .ag-gota-forma { fill: transparent; stroke: #8EA9BD; stroke-dasharray: 3 3; }
+.ag-slot.vazio .ag-gota-brilho { opacity: 0; }
+/* bebeu: a gota encolhe, sobe e some (glub) · voltou: ela cai de novo no slot */
+.ag-slot.bebeu .ag-gota-svg { animation: ag-bebe .55s ease-in; }
+@keyframes ag-bebe { 0% { transform: scale(1.25); opacity: 1; } 40% { transform: scale(1.1) translateY(-10px); } 100% { transform: scale(.4) translateY(-28px); opacity: .2; } }
+.ag-slot.bebeu::after { content: ''; position: absolute; inset: 18%; border-radius: 50%; border: 3px solid #3C93D6; animation: ag-onda .55s ease-out forwards; }
+@keyframes ag-onda { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.5); opacity: 0; } }
+.ag-slot.voltou .ag-gota-svg { animation: ag-volta .45s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes ag-volta { from { transform: translateY(-24px) scale(.5); opacity: 0; } }
+.ag-meta { height: 14px; border-radius: 99px; background: #DCE7EE; outline: 2px solid var(--ag-azul-esc); overflow: hidden; }
+.ag-meta span { display: block; height: 100%; background: linear-gradient(90deg, #3C93D6, #7CC8F2); transition: width .4s; }
+.ag-goles.completa .ag-meta span { background: linear-gradient(90deg, #E3B341, #F2D46A); }
+.ag-goles.completa .ag-selo { background: #F2D46A; color: #5A4300; }
+.ag-numeros { display: flex; gap: .5rem 1.1rem; flex-wrap: wrap; font-size: .88rem; color: var(--ag-azul-esc); }
+.ag-numeros span { display: inline-flex; align-items: center; gap: .3rem; }
+.ag-numeros .fogo { color: #C0641F; }
+
+/* medalhas da semana (ranking) */
+.ag-trilha { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .4rem; }
+.ag-md { display: grid; justify-items: center; gap: .1rem; padding: .45rem .2rem .4rem; border-radius: 12px; text-align: center; opacity: .45; filter: grayscale(.85); transition: opacity .3s, filter .3s, transform .3s; }
+.ag-md.ganhou { opacity: 1; filter: none; }
+.ag-md.ag-medalha-atual { background: var(--ag-claro); outline: 2px solid var(--ag-azul-esc); transform: translateY(-3px); }
+.ag-md b { font-size: .72rem; }
+.ag-md small { font: 700 .66rem var(--font-mono, monospace); color: #5C7A90; }
+.ag-medalha-svg { width: 38px; height: 46px; overflow: visible; filter: drop-shadow(2px 3px 0 rgba(20, 62, 102, .3)); }
+.md-fita { fill: #3C93D6; stroke: var(--ag-azul-esc); stroke-width: 1.2; }
+.md-disco { stroke: var(--ag-azul-esc); stroke-width: 1.8; }
+.md-aro { fill: none; stroke: rgba(255, 255, 255, .55); stroke-width: 1.5; }
+.md-estrela { fill: rgba(255, 255, 255, .85); }
+.md-bronze .md-disco { fill: #C9844A; } .md-bronze .md-fita { fill: #B5562E; }
+.md-prata .md-disco { fill: #C8D0D8; } .md-prata .md-fita { fill: #6E8496; }
+.md-ouro .md-disco { fill: #F2C230; } .md-ouro .md-fita { fill: #C0392B; }
+.md-platina .md-disco { fill: #9FE0E6; } .md-platina .md-fita { fill: #2E8A99; }
+.md-diamante .md-disco { fill: #B9A4F5; } .md-diamante .md-fita { fill: #5A3FB8; }
+.ag-prox { display: grid; gap: .35rem; }
+.ag-prox p { margin: 0; font-size: .88rem; }
+.ag-prox-barra { height: 12px; border-radius: 99px; background: #DCE7EE; outline: 2px solid var(--ag-azul-esc); overflow: hidden; }
+.ag-prox-barra span { display: block; height: 100%; background: linear-gradient(90deg, #E3B341, #F2D46A); transition: width .4s; }
+.ag-semana { margin-top: auto; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .45rem; align-items: end; height: 92px; }
+.ag-dia { display: grid; grid-template-rows: 1fr auto; justify-items: center; gap: .2rem; height: 100%; }
+.ag-dia-barra { align-self: end; width: 70%; height: calc(6px + var(--h) * 64px); border-radius: 6px 6px 3px 3px; background: #3C93D6; outline: 2px solid var(--ag-azul-esc); }
+.ag-dia.bateu .ag-dia-barra { background: #F2C230; }
+.ag-dia.futuro .ag-dia-barra { background: transparent; outline-style: dashed; outline-color: #8EA9BD; }
+.ag-dia small { font: 800 .7rem var(--font-mono, monospace); color: #5C7A90; }
+.ag-dia.hoje small { color: var(--ag-azul-esc); text-decoration: underline; }
+.ag-rodape { display: flex; justify-content: flex-end; }
+
+@media (max-width: 1280px) { .ag-grade { grid-template-columns: minmax(170px, .7fr) minmax(0, 1.3fr); } .ag-medalhas { grid-column: 1 / -1; } }
+@media (max-width: 760px) { .ag-grade { grid-template-columns: minmax(0, 1fr); } .ag-trilha { grid-template-columns: repeat(5, minmax(56px, 1fr)); overflow-x: auto; } }
+@media (prefers-reduced-motion: reduce) { .agua-tela, .ag-encher.pede, .ag-slot.bebeu .ag-gota-svg, .ag-slot.voltou .ag-gota-svg, .ag-slot.bebeu::after { animation: none !important; } }
+
+/* =========================================================
+   SKINS do Helpy (configurações da mesinha)
+   ========================================================= */
+.helpy-avatar .sk { display: none; }
+.helpy-avatar.skin-natal .sk-natal, .helpy-avatar.skin-terno .sk-terno, .helpy-avatar.skin-verao .sk-verao,
+.helpy-avatar.skin-junino .sk-junino, .helpy-avatar.skin-copa .sk-copa { display: inline; }
+/* com chapéu, a antena fica escondida embaixo */
+.helpy-avatar.skin-natal .helpy-antena, .helpy-avatar.skin-natal .helpy-luz,
+.helpy-avatar.skin-junino .helpy-antena, .helpy-avatar.skin-junino .helpy-luz { display: none; }
+/* Natal: gorro vermelho com aba e pompom brancos */
+.sk-gorro { fill: #D23A2C; stroke: #23291B; stroke-width: 2; }
+.sk-gorro-aba, .sk-pompom { fill: #FFFDF6; stroke: #23291B; stroke-width: 2; }
+/* Terno: paletó preto, camisa branca, lapelas e gravata-borboleta vermelha */
+.sk-paleto { fill: #1D1E1A; stroke: #23291B; stroke-width: 2; }
+.sk-camisa { fill: #FFFDF6; }
+.sk-lapela { fill: #3A3B36; }
+.sk-gravata { fill: #C0392B; stroke: #23291B; stroke-width: 1.2; }
+.sk-botao-terno { fill: #8A8B84; }
+.helpy-avatar.skin-terno .helpy-botao { display: none; }
+.helpy-avatar.skin-terno .helpy-braco { stroke: #1D1E1A; }
+/* Verão: óculos escuros */
+.sk-lente { fill: #10140C; stroke: #23291B; stroke-width: 2; }
+.sk-armacao { fill: none; stroke: #23291B; stroke-width: 2.6; stroke-linecap: round; }
+.sk-reflexo { fill: none; stroke: rgba(124, 195, 240, .8); stroke-width: 2; stroke-linecap: round; }
+/* São João: chapéu de palha com remendo */
+.sk-palha, .sk-palha-aba { fill: #E8C46A; stroke: #6B4E25; stroke-width: 2; }
+.sk-fita { fill: #C0392B; }
+.sk-remendo { fill: #4F7FC0; stroke: #6B4E25; stroke-width: 1.2; stroke-dasharray: 2 1.5; }
+.sk-palha-fio { stroke: #B88A3A; stroke-width: 2; stroke-linecap: round; }
+/* Copa: camisa amarela, gola verde e o 10 */
+.sk-camisa-copa { fill: #F2C230; stroke: #23291B; stroke-width: 2; }
+.sk-gola { fill: none; stroke: #2E8B3E; stroke-width: 3.5; stroke-linecap: round; }
+.sk-numero { font: 900 10px var(--font-display, sans-serif); fill: #2E8B3E; }
+.helpy-avatar.skin-copa .helpy-botao { display: none; }
+/* ao trocar de skin: ele gira e aparece com a roupa nova (poof!) */
+.helpy-avatar.trocando .helpy-svg { animation: helpy-troca .7s cubic-bezier(.3, 1.4, .5, 1); }
+@keyframes helpy-troca { 0% { transform: scale(1); } 35% { transform: scale(.3) rotate(-200deg); opacity: .2; } 70% { transform: scale(1.15) rotate(10deg); opacity: 1; } 100% { transform: none; } }
+.helpy-avatar.trocando::after {
+  content: ''; position: absolute; inset: -10%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, .9) 0 18%, rgba(242, 212, 106, .5) 30%, transparent 62%);
+  animation: helpy-poof .7s ease-out forwards;
+}
+@keyframes helpy-poof { from { transform: scale(.2); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
+
+/* escolha da skin no painel de configurações */
+.config-skins { display: grid; gap: .45rem; padding-top: .6rem; border-top: 1px dashed rgba(0, 0, 0, .18); }
+.config-skins > strong { font-size: .86rem; }
+.config-skins-grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+.config-skin.btn { height: auto; min-height: 0; padding: .35rem .25rem .45rem; display: grid; justify-items: center; gap: .1rem; font-size: .72rem; --key-depth: 4px; }
+.config-skin .helpy-avatar { width: 46px; height: 46px; }
+.config-skin .helpy-avatar .helpy-corpo { animation: none; }
+.config-skin .helpy-zzz, .config-skin .helpy-afk { display: none; }
+.btn.config-skin.ativo:not(.btn-ghost) { --k-top: #a6d68c; --k-top-2: #6fae55; --k-side: #2f6a28; --k-edge: #1f461a; --k-text: #10210c; }
+
+/* =========================================================
+   Lixeira ao lado da mesinha: o Helpy joga ali os tickets excluídos
+   ========================================================= */
+.lixeira-helpy { position: absolute; left: 150px; bottom: 26px; z-index: 2; width: 34px; height: 46px; pointer-events: none; }
+.lix-corpo {
+  position: absolute; left: 3px; right: 3px; bottom: 0; height: 36px; border-radius: 3px 3px 6px 6px;
+  background: repeating-linear-gradient(90deg, #8E928A 0 4px, #6E726A 4px 8px); border: 2px solid #23291B; box-shadow: 2px 2px 0 rgba(0, 0, 0, .3);
+}
+.lix-tampa {
+  position: absolute; left: 0; right: 0; top: 4px; height: 8px; border-radius: 4px; background: #5E625A; border: 2px solid #23291B;
+  transform-origin: 4px 100%; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1);
+}
+.lix-tampa::after { content: ''; position: absolute; left: 50%; top: -6px; width: 10px; height: 5px; transform: translateX(-50%); border: 2px solid #23291B; border-bottom: 0; border-radius: 4px 4px 0 0; }
+.lixeira-helpy.aberta .lix-tampa { transform: rotate(-55deg) translate(-2px, -4px); }
+.lixeira-helpy.recebeu { animation: lix-recebe .45s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes lix-recebe { 40% { transform: translateY(3px) scale(1.06, .92); } }
+/* no Registro em sequência o lugar dela é do pacote */
+/* no Registro em sequência a lixeira continua no chão (o pacote fica na mesa) */
+.lixo-ticket {
+  position: fixed; z-index: 951; display: inline-flex; align-items: center; gap: .2rem; padding: .1rem .4rem; border-radius: 5px;
+  background: #FFFCF2; color: #23291B; border: 2px solid #23291B; font: 800 .72rem var(--font-display); box-shadow: 2px 2px 0 rgba(0, 0, 0, .35);
+}
+.lixo-ticket .ic { width: .8rem; height: .8rem; }
+@media (prefers-reduced-motion: reduce) { .helpy-avatar.trocando .helpy-svg, .helpy-avatar.trocando::after, .lixeira-helpy.recebeu { animation: none !important; } }
+
+/* =========================================================
+   Salinha do Helpy (v7): garrafa pequena perto dele, lixeira no
+   chão (canto inferior direito, na frente da mesa), palavra do dia
+   na parede e os enfeites da sala conforme a skin
+   ========================================================= */
+.escritorio .garrafa-agua { left: 130px; right: auto; bottom: 50px; width: 50px; height: 50px; }
+.escritorio .lixeira-helpy { left: auto; right: 15px; bottom: 0px; z-index: 3; width: 40px; height: 54px; }
+.escritorio .lix-corpo { height: 42px; left: 3px; right: 3px; }
+.escritorio .lix-tampa { top: 5px; height: 9px; }
+/* sombra da lixeira no chão */
+.escritorio .lixeira-helpy::after { content: ''; position: absolute; left: -2px; right: -2px; bottom: -3px; height: 6px; border-radius: 50%; background: rgba(0, 0, 0, .3); z-index: -1; }
+/* Palavra do dia (no lugar do lembrete) */
+.quadro-aviso.palavra-dia { width: 118px; text-align: center; }
+.palavra-dia small { display: block; font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+.palavra-dia strong { display: block; margin: .15rem 0 .1rem; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; }
+.palavra-dia span { display: block; font-size: .62rem; line-height: 1.25; }
+
+/* enfeites da sala: ficam na parede, atrás do Helpy e da mesinha */
+.sala-enfeites { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
+.sala-enfeites .enf { display: none; }
+.escritorio.sala-natal .enf-natal, .escritorio.sala-terno .enf-terno, .escritorio.sala-verao .enf-verao,
+.escritorio.sala-junino .enf-junino, .escritorio.sala-copa .enf-copa { display: inline; }
+.escritorio .escritorio-parede, .escritorio .quadro-aviso { z-index: 1; }
+/* a parede muda de cor com a skin */
+.escritorio.sala-natal { background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .04) 0 14px, transparent 14px 28px), linear-gradient(180deg, #5A1F1A, #3A1612); }
+.escritorio.sala-terno { background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .16) 0 2px, transparent 2px 38px), linear-gradient(180deg, #2B3446, #1C2230); }
+.escritorio.sala-verao { background: linear-gradient(180deg, #8FD3F5 0%, #C6ECFA 55%, #F2DFA8 100%); }
+.escritorio.sala-junino { background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .05) 0 14px, transparent 14px 28px), linear-gradient(180deg, #5A3A1A, #3D2610); }
+.escritorio.sala-copa { background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .05) 0 14px, transparent 14px 28px), linear-gradient(180deg, #1F6B33, #154D24); }
+/* Natal: o pisca-pisca pisca */
+.enf-luz { animation: enf-pisca 1.2s steps(2, jump-none) infinite; }
+.enf-luz:nth-of-type(2n) { animation-delay: .6s; }
+@keyframes enf-pisca { 50% { opacity: .35; } }
+/* Verão: o sol gira devagar */
+.enf-sol-raios { transform-box: fill-box; transform-origin: center; animation: enf-gira 14s linear infinite; }
+@keyframes enf-gira { to { transform: rotate(360deg); } }
+/* São João: o balão balança */
+.enf-balao { transform-box: fill-box; transform-origin: 50% 0; animation: enf-balanca 3s ease-in-out infinite; }
+@keyframes enf-balanca { 50% { transform: rotate(5deg); } }
+@media (prefers-reduced-motion: reduce) { .enf-luz, .enf-sol-raios, .enf-balao { animation: none; } }
+
+/* =========================================================
+   Mesinha do Helpy: Configurações · Filtro · Cabide (opções no balão)
+   e a opção secreta do ICS (dois cliques no Helpy, com PIN)
+   ========================================================= */
+.btn-mesinha.btn-filtro:hover svg, .btn-mesinha.btn-cabide:hover svg { transform: none; }
+.btn-mesinha.btn-filtro:hover svg { animation: mesinha-filtro .6s ease-in-out; }
+.btn-mesinha.btn-cabide svg { transform-origin: 50% 20%; }
+.btn-mesinha.btn-cabide:hover svg { animation: mesinha-cabide .7s ease-in-out; }
+@keyframes mesinha-filtro { 40% { transform: translateY(2px) scaleY(.86); } 70% { transform: translateY(-1px); } }
+@keyframes mesinha-cabide { 25% { transform: rotate(-14deg); } 60% { transform: rotate(10deg); } 85% { transform: rotate(-4deg); } }
+
+.helpy-config-estado { display: block; padding: .45rem .6rem; border-radius: 10px; background: var(--surface-2); border: 1.5px dashed var(--border); }
+
+/* ---------- Balões de menu (Configurações · Filtro · Skins · ICS) ----------
+   Tudo no centro do balão e botões sempre do mesmo tamanho. */
+.helpy-msg-centro { text-align: center; }
+.helpy-msg-centro .helpy-acoes { justify-content: center; }
+/* um embaixo do outro: mesma largura, centralizados */
+.helpy-acoes.helpy-acoes-coluna { display: grid; grid-template-columns: minmax(0, 15rem); justify-content: center; }
+/* um do lado do outro: colunas iguais */
+.helpy-acoes.helpy-acoes-lado { display: grid; grid-template-columns: repeat(var(--colunas, 2), minmax(0, 1fr)); width: min(100%, 17rem); margin-inline: auto; }
+.helpy-acoes-coluna .helpy-acao, .helpy-acoes-lado .helpy-acao {
+  width: 100%; margin: 0; display: inline-flex; align-items: center; justify-content: center; gap: .35rem; text-align: center;
+}
+
+/* Cabide: as roupas em cardzinhos (miniatura do Helpy + nome), como no painel antigo */
+.helpy-acoes.helpy-acoes-skins { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+.helpy-acoes-skins .helpy-acao {
+  width: 100%; height: auto; min-height: 0; margin: 0; padding: .35rem .25rem .45rem;
+  display: grid; justify-items: center; align-content: start; gap: .1rem; font-size: .72rem;
+}
+.helpy-acoes-skins .skin-nome { line-height: 1.2; }
+.skin-mini { display: inline-grid; place-items: center; width: 46px; height: 46px; flex-shrink: 0; pointer-events: none; }
+.skin-mini .helpy-avatar { width: 46px !important; height: 46px !important; position: static !important; margin: 0 !important; animation: none !important; transform: none !important; }
+.skin-mini .helpy-avatar *, .skin-mini .helpy-avatar *::before, .skin-mini .helpy-avatar *::after { animation-play-state: paused !important; }
+.skin-mini .helpy-zzz, .skin-mini .helpy-afk, .skin-mini .helpy-garrafa-mao { display: none !important; }
+
+/* PIN do ICS */
+.helpy-pin { display: flex; justify-content: center; margin-top: .5rem; }
+.helpy-pin input {
+  width: 8.5rem; padding: .45rem .7rem;
+  border: 2px solid var(--tinta, #23291B); border-radius: 10px;
+  background: var(--surface); color: var(--text);
+  font: 700 1.1rem var(--font-mono, monospace); letter-spacing: .4em; text-align: center;
+  text-indent: .4em;   /* compensa o espaço que o letter-spacing deixa depois do último dígito: fica no centro */
+}
+.helpy-pin input::placeholder { letter-spacing: .1em; font-size: .9rem; color: var(--muted); }
+.helpy-pin input:placeholder-shown { text-indent: .1em; }
+.helpy-pin input:focus-visible { outline: 3px solid var(--primary); outline-offset: 1px; }
+.helpy-pin input:disabled { opacity: .55; }
+
+/* Usuário e senha do ICS: censurados, com Copiar ao lado */
+.helpy-ics { display: grid; gap: .45rem; margin-top: .5rem; text-align: left; }
+.helpy-ics-linha { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr) auto; align-items: center; gap: .5rem; }
+.helpy-ics-rot { font-size: .78rem; font-weight: 800; color: var(--muted); }
+.helpy-ics-valor { overflow: hidden; padding: .3rem .55rem; border-radius: 8px; background: var(--surface-2); border: 1.5px solid var(--border); font-family: var(--font-mono, monospace); letter-spacing: .04em; white-space: nowrap; text-overflow: clip; }
+.helpy-ics-linha .btn.helpy-ics-copiar { margin: 0 0 3px; white-space: nowrap; }
+.helpy-ics-copiar.copiado { color: var(--success, #2E7D32); }
+.helpy-ics-dica { margin-top: .5rem; }
+.helpy-ics-dica small { color: var(--muted); }

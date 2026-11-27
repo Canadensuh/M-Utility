@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M-Utility — Histórico de Tickets</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Nunito:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/simbolos.css" />
+  <link rel="stylesheet" href="css/icones.css" />
+  <link rel="stylesheet" href="css/helpy.css" />
+  <link rel="stylesheet" href="css/painel.css" />
+  <link rel="stylesheet" href="css/mesa.css" />
+  <link rel="stylesheet" href="css/paginas.css" />
+  <link rel="stylesheet" href="css/teclas.css" />
+  <link rel="stylesheet" href="css/papelaria.css" />
+  <link rel="stylesheet" href="css/cracha.css" />
+  <link rel="stylesheet" href="css/conta.css" />
+  <link rel="stylesheet" href="css/celular.css" />
+  <link rel="stylesheet" href="css/nc.css" />
+</head>
+<body class="tela-mesa tela-pagina tela-historico">
+
+  <header class="mesa-topo">
+    <a href="controle-nc.html" class="brand" data-inicio><img src="assets/logo.png" alt="" /><span class="brand-nome">M-<b>Utility</b></span></a>
+    <div class="topbar-acoes">
+      <div class="usuario-menu">
+        <span class="usuario-avatar" data-usuario-iniciais aria-hidden="true"></span>
+        <span class="usuario-info"><strong data-usuario-nome></strong><span data-usuario-perfil></span></span>
+        <button type="button" class="btn-sair" data-acao="sair">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mesa pagina-cheia">
+    <header class="area-topo centro-topo">
+      <h2 id="tituloPagina"><i class="ic ic-arquivo" aria-hidden="true"></i> Histórico de Tickets</h2>
+    </header>
+    <section class="tampo pagina-tampo" aria-labelledby="tituloPagina">
+      <div class="filtros-barra">
+        <label class="busca-campo"><i class="ic ic-olho" aria-hidden="true"></i>
+          <input id="busca" class="input" type="search" placeholder="Buscar por #ID, NF, DANFE, AWB, cliente…" autocomplete="off" /></label>
+        <select id="filtroSituacao" class="input" aria-label="Filtrar por situação">
+          <option value="">Todos os volumes</option>
+          <option value="no-setor">No setor NC</option>
+          <option value="saiu">Já saíram</option>
+          <option value="vencido">Prazo vencido</option>
+        </select>
+        <select id="filtroTipo" class="input" aria-label="Filtrar por tipo de NC"></select>
+        <select id="filtroStatus" class="input" aria-label="Filtrar por status"></select>
+        <select id="filtroCliente" class="input" aria-label="Filtrar por cliente"></select>
+        <div class="acao-lado acao-dir">
+          <div class="nc-visao" role="radiogroup" aria-label="Forma de exibir">
+            <button type="button" class="btn btn-sm ativo" data-visao="tickets" role="radio" aria-checked="true" title="Ver como tickets"><i class="ic ic-ticket" aria-hidden="true"></i><span class="rot"> Tickets</span></button>
+            <button type="button" class="btn btn-sm" data-visao="tabela" role="radio" aria-checked="false" title="Ver como tabela"><i class="ic ic-documento" aria-hidden="true"></i><span class="rot"> Tabela</span></button>
+          </div>
+          <button type="button" class="btn" id="copiarPlanilha" title="Copia as linhas (colunas B a L) para colar na planilha online"><i class="ic ic-copiar" aria-hidden="true"></i> Copiar<span class="rot"> para a planilha</span></button>
+          <button type="button" class="btn btn-primary" id="exportar"><i class="ic ic-download" aria-hidden="true"></i> Exportar CSV</button>
+          <button type="button" class="btn key--red key--icon btn-excluir-marcados" id="excluirMarcados" title="Marque a caixinha dos volumes para excluir" aria-label="Excluir volumes marcados"><i class="ic ic-x" aria-hidden="true"></i></button>
+        </div>
+      </div>
+      <div class="grade-rolagem" id="areaLista"><ul class="lista-tickets desktop-tickets" id="lista"></ul></div>
+    </section>
+  </main>
+
+  <p class="aviso-offline aviso-flutuante" id="avisoOffline" hidden></p>
+
+  <script src="js/catalogo.js"></script>
+  <script src="js/sessao.js"></script>
+  <script src="js/conta.js"></script>
+  <script src="js/navegacao.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/helpy.js"></script>
+  <script src="js/ticket-ui.js"></script>
+  <script src="js/planilha.js"></script>
+  <script src="js/anexos.js"></script>
+  <script src="js/arquivos.js"></script>
+  <script src="js/logo-zebra.js"></script>
+  <script src="js/impressao.js"></script>
+  <script src="js/foto.js"></script>
+  <script src="js/historico.js"></script>
+</body>
+</html>
