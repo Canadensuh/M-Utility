@@ -9,31 +9,42 @@ O M-Utility nasceu do código do HelpIA (portal de chamados) e herdou a identida
 "Papelaria Oliva": mesa verde-oliva, tickets de papel com contorno de tinta, botões em forma de
 tecla e o assistente **Helpy**.
 
-## Como executar
+## Como acessar
 
-Não há servidor nem instalação: é HTML, CSS e JavaScript puro.
+- **Online**: o site fica no GitHub Pages deste repositório (a página inicial leva para `frontend/index.html`).
+- **No computador**: no VS Code, clique com o botão direito em `frontend/index.html` → **Open with Live Server**.
 
-- Abra `frontend/index.html` no navegador, **ou**
-- no VS Code, clique com o botão direito em `frontend/index.html` → **Open with Live Server**.
+É HTML, CSS e JavaScript puro, sem instalação. O site publicado é a pasta `frontend/`
+(veja `.github/workflows/pages.yml`).
 
-Os dados ficam no **localStorage do navegador** (chave `mutility-db-v1`). Cada navegador/computador
-tem o seu próprio banco. Para levar os dados para outro lugar, use o Console (`exportar json` e
-`importar`).
+## Banco de dados (Supabase)
 
-> As senhas também ficam no navegador. É um controle de acesso para uso pessoal/local, não uma
-> proteção de segurança de verdade.
+Os dados ficam num banco online no **Supabase**, e todos os computadores veem as mesmas informações:
 
-### Contas iniciais
+- cada volume, crachá, cliente e registro de auditoria é uma linha da tabela `mutility_registros`;
+  só o que muda trafega (`js/nuvem.js`);
+- o que um computador grava chega aos outros **ao vivo**, e a tela se atualiza sozinha;
+- o navegador guarda uma cópia de trabalho: **sem internet** o app continua funcionando e envia
+  o que ficou pendente quando a conexão volta;
+- o **#ID** é reservado no banco, então dois computadores nunca pegam o mesmo número;
+- as **fotos dos anexos** ficam no Storage do Supabase (bucket `anexos`, privado);
+- travas de segurança: backup automático antes da primeira conexão de cada navegador e bloqueio
+  de apagar muitos volumes de uma vez (só o fechamento do mês faz isso).
 
-| ID | Cargo | Nome de usuário | E-mail | Senha |
-|---|---|---|---|---|
-| 0001 | Administrador | Murilo N.B | `murilonb@mutility.com.br` | pessoal |
-| 0002 | Usuário | Rafaela S.B | `rafaelasb@mutility.com.br` | `1234` |
-| 0003 | Usuário (conta padrão) | Total Guest | `totalguest@mutility.com.br` | `1234` |
+### Login e crachás
 
-Para entrar, use o **nome de usuário** (ex.: `TOTAL GUEST`) **ou** o e-mail; maiúsculas e acentos não importam.
+Cada pessoa entra com o **e-mail e a senha do seu login no Supabase** (Authentication › Users).
+Sem esse login o banco não abre, mesmo com o endereço e a chave pública que estão no código.
+Depois do primeiro login num computador, o nome de usuário também serve para entrar, e dá para
+entrar sem internet.
 
-Troque a senha em **Configurações** (cartão do usuário, canto superior direito).
+- **Crachá novo**: crie o crachá em **Crachás** (cargo e foto) **e** o login dele no Supabase
+  (**Authentication › Users › Add user**, com o mesmo e-mail e *Auto Confirm User* marcado).
+- **Trocar a própria senha**: em **Configurações** (cartão do usuário); a troca vale no Supabase.
+- **Senha de outra pessoa**: no painel do Supabase (**Authentication › Users** › ⋯).
+- Os cadastros novos pelo próprio Supabase ficam **desligados** (só o administrador cria logins).
+- Usuário e senha do **ICS** não ficam no código: o administrador cadastra em
+  **Crachás › engrenagem › Editar usuário e senha do ICS**.
 
 ## Controle NC
 
@@ -93,7 +104,8 @@ gera `SI-ddmmaaaa-hhmm`) e o cliente.
 
 Quando só existe uma opção, a etapa é preenchida e pulada. Na edição (lápis) o status pode ser
 trocado por qualquer outro (GRIS só para extravio) e o destino acompanha.
-Imagens da nota ficam no IndexedDB do navegador (ou, se ele não estiver disponível, no localStorage).
+Imagens da nota sobem para o Storage do Supabase; cada computador guarda uma cópia no IndexedDB
+do navegador depois de abrir a imagem pela primeira vez.
 
 ### Regras
 
@@ -103,7 +115,7 @@ Imagens da nota ficam no IndexedDB do navegador (ou, se ele não estiver dispon�
 | **Tratado** e **Devolução** tiram o volume do NC: exigem **AWB** e gravam a **DATA (S)** | `js/api.js` → `normalizar` |
 | Os demais status não têm data de saída | `js/api.js` → `normalizar` |
 | **Sem integração**: relógio no ticket (passe o mouse: quantos dias faltam); a partir do **8º dia** fica vermelho e treme; passou de **10 dias**, fica **vencido** (virar devolução) | `js/catalogo.js` → `prazo`, `js/ticket-ui.js` → `aviso` |
-| Os clientes cadastrados (Newell Brands, Essential, RPM, Prohall, Engage Eletro, Mundial, SCS-2, IZU STD, Plie) vêm no código e voltam se o navegador for limpo | `js/api.js` → `CLIENTES_PADRAO` |
+| Os clientes cadastrados ficam no banco online (os iniciais vêm em `CLIENTES_PADRAO`) | `js/api.js` → `CLIENTES_PADRAO` |
 | A faixa do ticket tem a **cor do cliente** | `js/catalogo.js` → `estiloCliente` |
 | Toda alteração entra na **linha do tempo** do volume e no **Registro de Auditoria** | `js/api.js` |
 
@@ -138,9 +150,11 @@ Fica no grupo **Utilitários** do menu lateral (`localizador-awb.html`) e está 
 
 O padrão da AWB é `TXA` + 1 letra + 9 números + `tx`. Ela pode ser bipada em maiúsculas ou minúsculas, mas aparece sempre como `TXAQ123456789tx`. A separação em andamento fica guardada no navegador, então recarregar a página não perde a lista.
 
-## Ciclo do mês e arquivos (sem banco de dados)
+## Ciclo do mês e arquivos
 
-Os dados de cada mês viram dois arquivos na pasta escolhida pelo administrador:
+Os dados de cada mês viram dois arquivos na pasta escolhida pelo administrador (de preferência uma
+pasta do OneDrive ou do Google Drive, para ter cópia na nuvem). O fechamento também deixa o banco
+online leve: o que já saiu do NC fica só nos arquivos.
 
 - `M-Utility - Controle NC (Nov-2026).csv`: a planilha do mês (colunas B a L + mês do #ID, local, nota, quem inseriu)
 - `M-Utility - Controle NC (Nov-2026).backup.json`: a cópia completa, com linha do tempo e imagens das notas
@@ -151,7 +165,7 @@ arquivos são baixados.
 
 **Fechar o ciclo** (Localizar, ou o aviso do Helpy quando o mês vira):
 1. salva a planilha e o backup do mês;
-2. o que já saiu do NC sai do navegador (fica no arquivo);
+2. o que já saiu do NC sai do banco online e do navegador (fica no arquivo, com as fotos);
 3. o que está no setor passa para o mês novo **com o mesmo #ID**, marcado "Do mês anterior · Out/2026", com o ticket
    de visual antigo, e ganha um cartão próprio ("Mês de Outubro") na escolha da Minha Mesa;
 4. o #ID recomeça do **#001**.
@@ -159,7 +173,15 @@ arquivos são baixados.
 **Consultar meses anteriores**: em Localizar, **Importar planilhas** (.csv ou .backup.json, vários de uma vez) ou
 **Carregar da pasta**, e procurar com a mesma busca da mesa (#ID, NF, DANFE, AWB, cliente). Só consulta.
 
-**Restaurar**: se o navegador for limpo, **Restaurar backup** com o `.backup.json` do mês aberto.
+**Restaurar**: **Restaurar backup** com o `.backup.json` do mês (por exemplo, para trazer de volta um mês fechado).
+
+**Limpeza opcional**: cada volume apagado deixa no banco uma linha vazia marcada como apagada (cerca de
+100 bytes), para os computadores desligados ficarem sabendo da exclusão. Para limpar as antigas, rode no
+SQL Editor do Supabase de tempos em tempos:
+
+```sql
+delete from public.mutility_registros where apagado and atualizado_em < now() - interval '60 days';
+```
 
 ## Impressão do ticket (Zebra ZT410)
 
@@ -175,8 +197,8 @@ Ao gerar o ticket (e no botão **Imprimir ticket** de um volume) sai uma etiquet
 - **Pela rede**: com a ZT410 no cabo de rede/Wi-Fi, informe o IP (visor da impressora) e o ZPL vai
   direto para ela (`http://IP/pstprnt`), sem janela e sem instalar nada.
 - **Sem janela pelo Chrome**: deixe a ZDesigner ZT410 como impressora padrão do Windows e abra o
-  sistema pelo **`Abrir M-Utility.bat`** (Chrome com `--kiosk-printing`, perfil próprio: os dados
-  ficam nesse perfil, então abra sempre pelo atalho).
+  sistema pelo **`Abrir M-Utility.bat`** (Chrome com `--kiosk-printing` e perfil próprio; os dados
+  vêm do banco online, então basta entrar com o seu login na primeira vez).
 - **Janela de impressão**: escolha a **ZDesigner ZT410**, papel do tamanho da etiqueta e margens "Nenhuma".
 - **Reimprimir**: o botão de impressora na tela do volume (clique no ticket) imprime de novo com o **status atual**.
 - A data sai como **ENTRADA NA NC** enquanto o volume está no setor e **SAÍDA DA NC** depois de Tratado/Devolução;
@@ -193,7 +215,7 @@ Ao gerar o ticket (e no botão **Imprimir ticket** de um volume) sai uma etiquet
 | `estatisticas.html` | Administrador | Indicadores e gráficos (cada um vira Barras, Colunas, Pizza ou Rosca; 7 dias em Colunas ou Linhas) e **Exportar imagem** (PNG) |
 | `clientes.html` | Administrador | Nome, CNPJ e cor; **Novo cliente** e o **lápis** do ticket abrem o mesmo pop-up |
 | `localizar.html` | Administrador | O mês aberto, **fechar o ciclo**, a pasta dos arquivos, restaurar backup e a consulta dos meses anteriores |
-| `criar-conta.html` | Administrador | Crachás: emitir, editar, trocar cargo, senha nova, suspender |
+| `criar-conta.html` | Administrador | Crachás: emitir, editar, trocar cargo, suspender, ICS (o login de cada crachá é criado no Supabase) |
 | `console.html` | Administrador | Tela inteira de comandos de texto (`help`, `nextid`, `list`, `show`, `status`, `awb`, `move`, `export`, `import`, `drop`…). `drop` apaga todos os tickets e pede um código de 6 dígitos |
 | `auditoria.html` | Administrador | Quem fez o quê e quando, com filtros e CSV |
 
@@ -216,14 +238,18 @@ As colunas ficam em `js/planilha.js`, na ordem das colunas **B a L** da planilha
 
 ```
 M-Utility/
+├── index.html               # leva para frontend/ (GitHub Pages pelo branch)
+├── .github/workflows/pages.yml  # publica frontend/ no GitHub Pages
 └── frontend/
-    ├── index.html · login.html
-    ├── controle-nc.html · historico.html
-    ├── estatisticas.html · clientes.html · criar-conta.html · console.html · auditoria.html
-    ├── assets/logo.png
-    ├── css/                 # identidade herdada do HelpIA + css/nc.css (peças do Controle NC)
+    ├── index.html · login.html  # site público (apresentação em slides) e login
+    ├── controle-nc.html · historico.html · emails.html · localizador-awb.html
+    ├── estatisticas.html · clientes.html · criar-conta.html · localizar.html · console.html · auditoria.html
+    ├── assets/
+    ├── css/                 # identidade "Papelaria Oliva" + css/vitrine.css (site e login)
     └── js/
-        ├── api.js           # banco local (localStorage) e regras; registra a auditoria
+        ├── nuvem.js         # banco online (Supabase): login, sincronização, ao vivo, fotos
+        ├── api.js           # cópia de trabalho no navegador e as regras; registra a auditoria
+        ├── landing.js · vitrine.js  # a apresentação em slides e a salinha do Helpy do site
         ├── catalogo.js      # tipos de NC, status, locais, DANFE, prazo, cores
         ├── controle-nc.js   # a mesa e o passo a passo de inserir volume
         ├── sequencia-emails.js  # registro em sequência e e-mail dos tickets marcados na mesa
@@ -238,5 +264,6 @@ M-Utility/
 
 ## Próximos passos
 
-1. Sincronização automática com a planilha online (Microsoft Graph ou Power Automate).
-2. Novas ferramentas do M-Utility além do Controle NC.
+1. Planilha do fechamento em `.xlsx` formatado (hoje é `.csv`).
+2. Sincronização automática com a planilha online (Microsoft Graph ou Power Automate).
+3. Novas ferramentas do M-Utility além do Controle NC.
