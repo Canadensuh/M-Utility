@@ -79,6 +79,7 @@ const Anexos = {
     try {
       const blob = await this.comprimir(arquivo);
       await this.transacao('readwrite', (loja) => loja.put({ id, blob, nome, criado: new Date().toISOString() }));
+      window.Nuvem?.enviarAnexo(id, blob).catch(() => {});   // banco online: a foto sobe em segundo plano
       return { id, nome, tipo: 'image/jpeg', tamanho: blob.size };
     } catch {
       // Plano B: imagem menor, como texto no localStorage
@@ -96,8 +97,14 @@ const Anexos = {
     const naReserva = this.reserva()[id];
     if (naReserva) return naReserva.dados;
     try {
-      const registro = await this.transacao('readonly', (loja) => loja.get(id));
-      if (!registro?.blob) return null;
+      let registro = await this.transacao('readonly', (loja) => loja.get(id));
+      if (!registro?.blob) {
+        // foto anexada em outro computador: baixa do banco online e guarda aqui
+        const blob = await window.Nuvem?.baixarAnexo(id);
+        if (!blob) return null;
+        registro = { id, blob, nome: `${id}.jpg`, criado: new Date().toISOString() };
+        await this.transacao('readwrite', (loja) => loja.put(registro));
+      }
       const url = URL.createObjectURL(registro.blob);
       this._urls.set(id, url);
       return url;
@@ -136,6 +143,7 @@ const Anexos = {
       if (this._urls.has(id)) { URL.revokeObjectURL(this._urls.get(id)); this._urls.delete(id); }
     }
     if (mudou) this.gravarReserva(reserva);
+    window.Nuvem?.apagarAnexos(ids).catch(() => {});
   },
 
   /** Preenche as <img data-anexo="id"> de um trecho da tela. */

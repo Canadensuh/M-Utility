@@ -251,7 +251,7 @@ const Banco = (() => {
   function registrar(db, conta, acao, alvo = '', detalhe = '') {
     db.seq.auditoria += 1;
     db.auditoria.push({
-      id: db.seq.auditoria, em: agora(),
+      id: db.seq.auditoria, uid: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`, em: agora(),   // uid: único em todos os computadores (banco online)
       usuario_id: conta?.id ?? null, usuario: conta?.nome || 'Sistema', perfil: conta?.perfil || '',
       acao, alvo, detalhe,
     });
@@ -400,6 +400,21 @@ const Banco = (() => {
       if (!conta.ativo) throw new ErroBanco(403, 'Esta conta está suspensa. Fale com o administrador.');
       registrar(db, conta, 'Entrou no sistema');
       return { token: `local-${conta.id}`, usuario: publico(conta) };
+    },
+    /** Com o banco online: o Supabase já conferiu o e-mail e a senha. Guarda a senha só aqui (para entrar sem internet). */
+    loginConfiado(db, _, { email, senha }) {
+      const conta = db.contas.find((c) => chaveEmail(c.email) === chaveEmail(email));
+      if (!conta) throw new ErroBanco(404, 'O login funcionou, mas não existe crachá com esse e-mail no M-Utility. Peça ao administrador para criar.');
+      if (!conta.ativo) throw new ErroBanco(403, 'Esta conta está suspensa. Fale com o administrador.');
+      conta.senha = senha;
+      registrar(db, conta, 'Entrou no sistema');
+      return { token: `local-${conta.id}`, usuario: publico(conta) };
+    },
+    /** E-mail de quem entra pelo nome de usuário (o Supabase só aceita e-mail). */
+    emailDoUsuario(db, _, { nome }) {
+      const chave = chaveEmail(nome).replace(/\s+/g, ' ');
+      const conta = db.contas.find((c) => chaveEmail(c.email) === chave) || db.contas.find((c) => chaveEmail(c.nome).replace(/\s+/g, ' ') === chave);
+      return { email: conta?.email || '' };
     },
     eu(db, token) { return publico(contaDoToken(db, token)); },
     trocarSenha(db, token, { atual, nova }) {
@@ -716,15 +731,20 @@ const Banco = (() => {
     },
   };
 
-  const SO_LEITURA = new Set(['eu', 'icsDaConta', 'volumes', 'volume', 'clientes', 'auditoria', 'listarContas', 'proximoId', 'ciclo', 'backupCiclo', 'exportar', 'login', 'registrarAcao']);
+  const SO_LEITURA = new Set(['eu', 'icsDaConta', 'volumes', 'volume', 'clientes', 'auditoria', 'listarContas', 'proximoId', 'ciclo', 'backupCiclo', 'exportar', 'login', 'registrarAcao', 'emailDoUsuario']);
+  // estas só leem de verdade; login e registrarAcao gravam a auditoria (que também sobe para o banco online)
+  const LEITURA_PURA = new Set([...SO_LEITURA].filter((r) => !['login', 'registrarAcao'].includes(r)));
 
   async function chamar(rota, corpo = {}) {
+    // banco online (js/nuvem.js): antes de gravar, puxa o que os outros computadores mudaram
+    if (!SO_LEITURA.has(rota)) await window.Nuvem?.antesDeGravar(rota);
     const db = ler();
     try {
       const dados = rotas[rota](db, window.Sessao?.token(), corpo);
       salvar(db);
       // avisa quem salva os arquivos do mês na pasta (js/arquivos.js) que algo mudou
       if (!SO_LEITURA.has(rota)) window.dispatchEvent(new CustomEvent('mutility:dados', { detail: { rota } }));
+      if (!LEITURA_PURA.has(rota)) window.Nuvem?.depoisDeGravar(rota);   // e envia o que mudou aqui
       return { ok: true, status: 200, dados };
     } catch (erro) {
       if (!(erro instanceof ErroBanco)) { console.error(erro); return { ok: false, status: 500, dados: { erro: 'Erro inesperado. Veja o console do navegador.' } }; }
@@ -733,18 +753,42 @@ const Banco = (() => {
     }
   }
 
-  return { chamar, CHAVE, SENHA_PADRAO, ler };
+  return { chamar, CHAVE, SENHA_PADRAO, ler, salvar };
 })();
 
 const API = {
   // Contas e acesso
   login(email, senha) { return Banco.chamar('login', { email, senha }); },
+  loginConfiado(email, senha) { return Banco.chamar('loginConfiado', { email, senha }); },
+  emailDoUsuario(nome) { return Banco.chamar('emailDoUsuario', { nome }); },
   eu() { return Banco.chamar('eu'); },
-  trocarSenha(atual, nova) { return Banco.chamar('trocarSenha', { atual, nova }); },
+  /** Com o banco online, a senha de verdade é a do Supabase: troca lá e aqui. */
+  async trocarSenha(atual, nova) {
+    if (window.Nuvem?.ligado()) {
+      const eu = window.Sessao?.usuario();
+      if (String(nova || '').length < 6) return { ok: false, status: 422, dados: { erro: 'A nova senha precisa de pelo menos 6 caracteres.' } };
+      const r = await Nuvem.trocarSenha(eu?.email, atual, nova);
+      if (r.erro) return { ok: false, status: 422, dados: { erro: r.erro } };
+      const db = Banco.ler(); const conta = db.contas.find((c) => c.id === eu?.id);
+      if (conta) { conta.senha = atual; Banco.salvar(db); }   // a rota local confere a "atual" e grava a nova
+    }
+    return Banco.chamar('trocarSenha', { atual, nova });
+  },
   listarContas() { return Banco.chamar('listarContas'); },
-  criarConta(dados) { return Banco.chamar('criarConta', dados); },
+  async criarConta(dados) {
+    const r = await Banco.chamar('criarConta', dados);
+    if (r.ok && window.Nuvem?.ligado()) {
+      window.Efeitos?.toast?.(`Crachá criado ✅ Crie também o login dele no Supabase: Authentication › Users › Add user, com o e-mail ${r.dados.email}.`, { tipo: 'alerta', duracao: 12000 });
+    }
+    return r;
+  },
   atualizarConta(id, dados) { return Banco.chamar('atualizarConta', { id, ...dados }); },
-  redefinirSenha(id, senha) { return Banco.chamar('redefinirSenha', { id, senha }); },
+  redefinirSenha(id, senha) {
+    if (window.Nuvem?.ligado()) {
+      return Promise.resolve({ ok: false, status: 400, dados: { erro: 'Com o banco online, a senha de outra pessoa é trocada no Supabase (Authentication › Users › ⋯ › Reset password) ou pela própria pessoa em Configurações.' } });
+    }
+    return Banco.chamar('redefinirSenha', { id, senha });
+  },
   verIcs(pin) { return Banco.chamar('verIcs', { pin }); },
   icsDaConta(id) { return Banco.chamar('icsDaConta', { id }); },
   salvarIcs(id, usuario, senha) { return Banco.chamar('salvarIcs', { id, usuario, senha }); },

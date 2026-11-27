@@ -58,9 +58,16 @@ function destinoDepoisDoLogin(usuario) {
   return volta && permitidas.includes(volta) ? volta : Sessao.destino(usuario);
 }
 
-// Já logado? Vai direto para a mesa.
+// Já logado (no app e no banco online)? Vai direto para a mesa.
 const atual = Sessao.usuario();
-if (atual) location.replace(Sessao.destino(atual));
+(async () => {
+  if (!atual) return;
+  if (window.Nuvem?.configurado) {
+    await Nuvem.pronto;   // o Nuvem lê o login guardado
+    if (!Nuvem.ligado()) { Sessao.limpar(); return; }
+  }
+  location.replace(Sessao.destino(atual));
+})();
 
 document.querySelectorAll('input[name="perfil"]').forEach((radio) => {
   radio.addEventListener('change', () => { escolherPerfil(radio.value); helpyCara(radio.value === 'admin' ? 'piscando' : 'feliz'); });
@@ -68,6 +75,27 @@ document.querySelectorAll('input[name="perfil"]').forEach((radio) => {
 escolherPerfil(params.get('perfil') === 'admin' ? 'admin' : 'usuario');
 
 if (params.get('motivo') === 'expirou') mostrarAviso('Sua sessão terminou. Entre novamente para continuar.');
+if (params.get('motivo') === 'conectar') mostrarAviso('O M-Utility agora usa o banco online. Entre de novo (com o seu e-mail) para conectar este computador.');
+
+/**
+ * Banco online: o Supabase confere o e-mail e a senha; depois o app sincroniza e abre a sessão.
+ * Sem internet, entra com a senha guardada neste computador (a do último login online).
+ */
+async function entrarComNuvem(entrada, senha) {
+  let email = entrada;
+  if (!entrada.includes('@')) {
+    const r = await API.emailDoUsuario(entrada);
+    email = r.dados?.email || '';
+    if (!email) return { ok: false, dados: { erro: 'Use o seu e-mail para entrar (o nome de usuário só funciona depois do primeiro login neste computador).' } };
+  }
+  const n = await Nuvem.entrar(email, senha);
+  if (n.erro === 'senha') return { ok: false, dados: { erro: 'Usuário ou senha incorretos.' } };
+  if (n.erro === 'offline') return API.login(email, senha);   // sem internet: a senha deste computador
+  if (n.erro) return { ok: false, dados: { erro: `O banco online recusou: ${n.erro}` } };
+  elBotao.textContent = 'Sincronizando…';
+  await Nuvem.sincronizar();
+  return API.loginConfiado(email, senha);
+}
 
 // O Helpy fecha um olho enquanto a senha é digitada
 elEmail.addEventListener('focus', () => helpyCara('pensando'));
@@ -98,7 +126,7 @@ elForm.addEventListener('submit', async (evento) => {
   elBotao.disabled = true;
   elBotao.textContent = 'Entrando…';
   try {
-    const { ok, dados } = await API.login(email, senha);
+    const { ok, dados } = window.Nuvem?.configurado ? await entrarComNuvem(email, senha) : await API.login(email, senha);
     if (!ok) {
       mostrarAviso(dados.erro || 'Não foi possível entrar.');
       helpyCara('triste');
